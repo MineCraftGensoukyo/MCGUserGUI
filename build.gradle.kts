@@ -8,7 +8,11 @@ plugins {
 
 taboolib {
     install("common")
+    install("module-chat")
     install("platform-bukkit")
+    install("module-database")
+    install("module-configuration")
+    install("module-lang")
     classifier = null
     version = "6.0.0-53"
     description {
@@ -35,6 +39,7 @@ dependencies {
     compileOnly(fileTree("libs"))
     implementation("org.jetbrains.kotlinx","kotlinx-coroutines-core",coroutines_version)
     implementation("org.jetbrains.kotlinx","kotlinx-coroutines-jdk8",coroutines_version)
+    implementation(fileTree("lib"))
 }
 
 tasks.withType<JavaCompile> {
