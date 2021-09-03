@@ -24,12 +24,14 @@ taboolib {
         dependencies {
             name("WakeShow").with("bukkit")
         }
-        load("START")
     }
 }
 
 repositories {
     mavenCentral()
+    flatDir {
+        dir("lib")
+    }
 }
 
 dependencies {
