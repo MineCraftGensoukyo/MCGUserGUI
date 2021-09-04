@@ -10,6 +10,7 @@ object EventListener {
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     fun playerCloseScreenEventListener(e:PlayerCloseScreenEvent){
         info("${e.player.name}关闭${e.screen.id}")
-        e.player.sendMessage("${e.player.name}关闭${e.screen.id}")
+        if (e.player.isOp)
+            e.player.sendMessage("§6${e.player.name}关闭§4${e.screen.id} - ${e.screen}")
     }
 }

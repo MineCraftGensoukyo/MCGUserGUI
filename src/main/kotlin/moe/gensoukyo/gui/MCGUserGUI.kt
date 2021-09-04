@@ -50,6 +50,13 @@ object MCGUserGUI : Plugin() {
                     sender.sendMessage("测试GUI已开启${testPage}")
                     testPage.showPage(sender)
                 }
+                literal("cache",optional = true){
+                    execute<Player> { sender, _, _ ->
+                        val testPage = TestPage()
+                        sender.sendMessage("测试GUI已开启${testPage}")
+                        testPage.showCachePage(sender)
+                    }
+                }
             }
             execute<ProxyCommandSender> { sender, _, _ ->
                 val json = TJ()
