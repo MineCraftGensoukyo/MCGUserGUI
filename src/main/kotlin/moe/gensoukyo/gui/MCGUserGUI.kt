@@ -4,27 +4,29 @@ import moe.gensoukyo.gui.pages.TestPage
 import org.bukkit.entity.Player
 import taboolib.common.platform.Plugin
 import taboolib.common.platform.ProxyCommandSender
-import taboolib.common.platform.ProxyPlayer
 import taboolib.common.platform.command.command
 import taboolib.common.platform.function.info
 import taboolib.platform.BukkitPlugin
+import moe.gensoukyo.gui.config.MainConfig as configs
 import taboolib.module.chat.TellrawJson as TJ
 
 object MCGUserGUI : Plugin() {
     private val mainCommandList = hashMapOf<String,String>(
         "help" to " -- 获取帮助\n",
         "version" to " -- 查看插件版本\n",
+        "reload" to " -- 重载配置\n",
         "test" to " -- 打开测试GUI\n"
     )
-
-
 
     override fun onLoad() {
         // override onLoad()
     }
 
     override fun onEnable() {
-        // override onEnable()
+        configs.conf.addDefaults(mapOf(
+            "AlchemyRecipes" to ".\\mcg_data\\items\\AlchemyRecipes.csv"
+        ))
+
         command("mcggui"){
             //一级子指令参数
             literal("help",optional = true){
@@ -44,6 +46,17 @@ object MCGUserGUI : Plugin() {
                     sender.sendMessage("§6${description.name} --- ${description.version}")
                 }
             }
+            literal("reload",optional = true){
+                execute<ProxyCommandSender>{ sender, _, _ ->
+                    try {
+                        configs.conf.reload()
+                        configs.alchemyItems.reload()
+                        sender.sendMessage("§6重载成功！ - Version:${BukkitPlugin.getInstance().description.version}")
+                    }catch (e :Exception){
+                        sender.sendMessage("§6重载失败！ - Err:${e}")
+                    }
+                }
+            }
             literal("test",optional = true){
                 execute<Player> { sender, _, _ ->
                     val testPage = TestPage()
@@ -56,6 +69,14 @@ object MCGUserGUI : Plugin() {
                         sender.sendMessage("测试GUI已开启${testPage}")
                         testPage.showCachePage(sender)
                     }
+                }
+            }
+            literal("coftest",optional = true){
+                execute <ProxyCommandSender> { sender, _, _ ->
+                    configs.conf.getKeys(false).forEach{
+                        sender.sendMessage(it)
+                    }
+
                 }
             }
             execute<ProxyCommandSender> { sender, _, _ ->
