@@ -1,11 +1,14 @@
 package moe.gensoukyo.gui
 
+import moe.gensoukyo.gui.config.CsvConfigLoader
 import moe.gensoukyo.gui.pages.TestPage
 import org.bukkit.entity.Player
 import taboolib.common.platform.Plugin
 import taboolib.common.platform.ProxyCommandSender
 import taboolib.common.platform.command.command
 import taboolib.common.platform.function.info
+import taboolib.common.platform.function.pluginId
+import taboolib.common.platform.function.pluginVersion
 import taboolib.platform.BukkitPlugin
 import moe.gensoukyo.gui.config.MainConfig as configs
 import taboolib.module.chat.TellrawJson as TJ
@@ -23,9 +26,6 @@ object MCGUserGUI : Plugin() {
     }
 
     override fun onEnable() {
-        configs.conf.addDefaults(mapOf(
-            "AlchemyRecipes" to ".\\mcg_data\\items\\AlchemyRecipes.csv"
-        ))
 
         command("mcggui"){
             //一级子指令参数
@@ -43,7 +43,7 @@ object MCGUserGUI : Plugin() {
             literal("version",optional = true){
                 execute<ProxyCommandSender> { sender, _, _ ->
                     val description = BukkitPlugin.getInstance().description
-                    sender.sendMessage("§6${description.name} --- ${description.version}")
+                    sender.sendMessage("§6${pluginId} --- ${pluginVersion}")
                 }
             }
             literal("reload",optional = true){
@@ -51,7 +51,9 @@ object MCGUserGUI : Plugin() {
                     try {
                         configs.conf.reload()
                         configs.alchemyItems.reload()
-                        sender.sendMessage("§6重载成功！ - Version:${BukkitPlugin.getInstance().description.version}")
+                        sender.sendMessage("§6重载成功！ - Version:${pluginVersion}")
+                        configs.alchemyRecipes.reload()
+                        sender.sendMessage("§6CSV配置重载成功！ - Version:${CsvConfigLoader.version}")
                     }catch (e :Exception){
                         sender.sendMessage("§6重载失败！ - Err:${e}")
                     }
@@ -76,7 +78,18 @@ object MCGUserGUI : Plugin() {
                     configs.conf.getKeys(false).forEach{
                         sender.sendMessage(it)
                     }
+                    sender.sendMessage("alchemyItems")
+                    configs.alchemyItems.getKeys(false).forEach{
+                        sender.sendMessage(it)
+                    }
 
+                }
+            }
+            literal("csvtest",optional = true){
+                execute<ProxyCommandSender>{ sender,_,_ ->
+                    configs.alchemyRecipes.recipeList.forEach{
+                        sender.sendMessage(it.toString())
+                    }
                 }
             }
             execute<ProxyCommandSender> { sender, _, _ ->

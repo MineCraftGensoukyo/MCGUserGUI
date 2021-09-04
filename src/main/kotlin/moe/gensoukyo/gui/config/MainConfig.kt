@@ -12,4 +12,8 @@ object MainConfig{
     @Config("AlchemyItems.yml")
     lateinit var alchemyItems: SecuredFile
         private set
+
+    //@CsvConfig(".\\mcg_data\\items\\AlchemyRecipes.csv")
+    lateinit var alchemyRecipes: CsvConfiguration
+
 }
