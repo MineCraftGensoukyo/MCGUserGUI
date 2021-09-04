@@ -1,14 +1,11 @@
 package moe.gensoukyo.gui.commands
 
-import moe.gensoukyo.gui.MCGUserGUI
 import moe.gensoukyo.gui.pages.TestPage
-import org.bukkit.command.defaults.BukkitCommand
 import org.bukkit.entity.Player
-import taboolib.common.TabooLibCommon
 import taboolib.common.platform.ProxyCommandSender
 import taboolib.common.platform.ProxyPlayer
-import taboolib.common.platform.command.*
-import taboolib.common.util.Version
+import taboolib.common.platform.command.mainCommand
+import taboolib.common.platform.command.subCommand
 import taboolib.module.chat.TellrawJson
 import taboolib.platform.BukkitPlugin
 

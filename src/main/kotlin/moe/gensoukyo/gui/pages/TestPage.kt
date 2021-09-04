@@ -9,7 +9,6 @@ import me.wuxie.wakeshow.wakeshow.ui.component.WSlot
 import moe.gensoukyo.gui.util.Pos
 import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
-import taboolib.platform.type.BukkitPlayer
 
 class TestPage : Page{
     companion object {

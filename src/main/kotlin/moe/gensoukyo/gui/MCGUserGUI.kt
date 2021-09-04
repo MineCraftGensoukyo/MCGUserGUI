@@ -1,20 +1,14 @@
 package moe.gensoukyo.gui
 
-import me.wuxie.wakeshow.wakeshow.api.event.PlayerCloseScreenEvent
 import moe.gensoukyo.gui.pages.TestPage
 import org.bukkit.entity.Player
-import org.bukkit.event.EventHandler
 import taboolib.common.platform.Plugin
 import taboolib.common.platform.ProxyCommandSender
 import taboolib.common.platform.ProxyPlayer
-import taboolib.common.platform.command.CommandContext
 import taboolib.common.platform.command.command
-import taboolib.module.chat.TellrawJson as TJ
 import taboolib.common.platform.function.info
-import taboolib.common.platform.function.registerListener
 import taboolib.platform.BukkitPlugin
-import taboolib.platform.type.BukkitPlayer
-import java.util.*
+import taboolib.module.chat.TellrawJson as TJ
 
 object MCGUserGUI : Plugin() {
     private val mainCommandList = hashMapOf<String,String>(
@@ -33,12 +27,7 @@ object MCGUserGUI : Plugin() {
         // override onEnable()
         command("mcggui"){
             //一级子指令参数
-            dynamic(true){
-                suggestion<ProxyPlayer> { _, _ ->
-                    mainCommandList.keys.toList()
-                }
-            }
-            literal("help"){
+            literal("help",optional = true){
                 execute<taboolib.common.platform.ProxyCommandSender> { sender, _, _->
                     val helpText = StringBuilder()
                     helpText.append("§6 ===============================\n")
@@ -49,13 +38,13 @@ object MCGUserGUI : Plugin() {
                     sender.sendMessage(helpText.toString())
                 }
             }
-            literal("version"){
+            literal("version",optional = true){
                 execute<ProxyCommandSender> { sender, _, _ ->
                     val description = BukkitPlugin.getInstance().description
                     sender.sendMessage("§6${description.name} --- ${description.version}")
                 }
             }
-            literal("test"){
+            literal("test",optional = true){
                 execute<Player> { sender, _, _ ->
                     val testPage = TestPage()
                     sender.sendMessage("测试GUI已开启${testPage}")
