@@ -1,5 +1,6 @@
 package moe.gensoukyo.gui.config
 
+import sun.applet.Main
 import taboolib.common.LifeCycle
 import taboolib.common.inject.Injector
 import taboolib.common.platform.Awake
@@ -55,10 +56,11 @@ object CsvConfigLoader {
             }
             val result = CsvConfiguration()
             result.recipeList = recipeList
+            result.recipeNameList = recipeNameList
             MainConfig.alchemyRecipes = result
             info("§6CSV配置加载完毕！")
         } catch (e: Exception) {
-            warning("[CSVLoaderErro]${e}")
+            warning("[CSVLoaderError]${e}")
         }
     }
 }
