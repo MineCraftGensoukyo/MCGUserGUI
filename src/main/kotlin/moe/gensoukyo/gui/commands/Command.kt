@@ -18,9 +18,9 @@ object Command {
     )
 
     /*@CommandBody*/
-    val main = mainCommand{
+    val main = mainCommand {
         ///一级子指令参数
-        dynamic(false){
+        dynamic(false) {
             suggestion<ProxyPlayer> { _, _ ->
                 mainCommandList
             }
@@ -38,13 +38,15 @@ object Command {
 
     /*@CommandBody(optional = true)*/
     val help = subCommand {
-        execute<ProxyCommandSender> { sender, _, _->
-            sender.sendMessage("""§6
+        execute<ProxyCommandSender> { sender, _, _ ->
+            sender.sendMessage(
+                """§6
                     ===============================
                     help  -- 获取帮助
                     test  -- 打开测试GUI
                     ===============================
-                """.trimIndent())
+                """.trimIndent()
+            )
         }
     }
 

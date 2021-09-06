@@ -6,7 +6,7 @@ class CsvConfiguration {
     var recipeList: MutableList<HashMap<String, Int>> = mutableListOf()
     var recipeNameList: HashMap<Int, String> = HashMap<Int, String>()
 
-    fun reload(){
+    fun reload() {
         try {
             CsvConfigLoader.load()
         } catch (e: Exception) {

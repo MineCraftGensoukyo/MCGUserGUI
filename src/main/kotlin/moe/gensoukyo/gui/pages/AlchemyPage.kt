@@ -1,16 +1,21 @@
 package moe.gensoukyo.gui.pages
 
-import me.wuxie.wakeshow.wakeshow.ui.WInventoryScreen
+import me.wuxie.wakeshow.wakeshow.api.WuxieAPI
 import me.wuxie.wakeshow.wakeshow.ui.WxScreen
 import me.wuxie.wakeshow.wakeshow.ui.component.WButton
 import me.wuxie.wakeshow.wakeshow.ui.component.WCooldingTag
 import me.wuxie.wakeshow.wakeshow.ui.component.WSlot
-import moe.gensoukyo.lib.server.bukkit
-import noppes.npcs.api.event.NpcEvent
+import moe.gensoukyo.gui.util.RecipeCheck
+import moe.gensoukyo.lib.server.npcApi
 import org.bukkit.Material
+import org.bukkit.Particle
 import org.bukkit.inventory.ItemStack
+import taboolib.common.platform.function.info
+import taboolib.common.platform.function.warning
+import taboolib.common.reflect.Reflex.Companion.invokeMethod
+import taboolib.platform.util.giveItem
 
-class AlchemyPage :Page {
+class AlchemyPage : Page {
     companion object {
         private const val PLAYER_LEVEL_ID = 67
 
@@ -41,7 +46,7 @@ class AlchemyPage :Page {
 
         //GUI对象
         var Gui =
-            WInventoryScreen(
+            WxAlchemyScreen(
                 "炼金UI",
                 GUI_ALCHEMY_1,
                 posGuiTest1.dx,
@@ -49,7 +54,7 @@ class AlchemyPage :Page {
                 posGuiTest1.w,
                 posGuiTest1.h,
                 7,
-                105
+                105,
             )
         val guiContainer = Gui.container
 
@@ -60,7 +65,7 @@ class AlchemyPage :Page {
         val itemInput4 = WSlot(guiContainer, "item_input_4", air, 86, 64)
         val itemInput5 = WSlot(guiContainer, "item_input_5", air, 53, 81)
         val itemInput6 = WSlot(guiContainer, "item_input_6", air, 16, 64)
-        val itemInputBook = WSlot(guiContainer, "item_input_book", air, 125, 77)
+        //val itemInputBook = WSlot(guiContainer, "item_input_book", air, 125, 77)
 
 
         //输出物品栏
@@ -72,7 +77,7 @@ class AlchemyPage :Page {
             itemInput4,
             itemInput5,
             itemInput6,
-            itemInputBook
+            //itemInputBook
         )
 
         //按钮
@@ -83,7 +88,7 @@ class AlchemyPage :Page {
         val coolingTag = WCooldingTag(guiContainer, "cool_output_1", 122, 45, 46, 10, 0, 20, COLD_1, COLD_1_BG)
 
         //注册物品栏
-        itemInputBook.tooltips = listOf("配方书")
+        //itemInputBook.tooltips = listOf("配方书")
         for (slot in inputList) {
             slot.isCanDrag = true
             guiContainer.add(slot)
@@ -101,6 +106,37 @@ class AlchemyPage :Page {
         btnOutput.h = 19
         btnOutput.isCanPress = true
         guiContainer.add(btnOutput)
+
+        btnOutput.setFunction { _, player ->
+            try {//WuxieAPI.updateGui(player)
+                val inputItems = inputList.map { it.itemStack }
+                info("玩家${player}在${Gui.id} - ${Gui}输入\n${inputItems.map { it.itemMeta?.displayName }}")
+                val output = RecipeCheck(player.npcApi, inputItems).RecipeCheck()
+                if (output != null) {
+                    coolingTag.currentTime = 0
+                    coolingTag.updateTime()
+                    WuxieAPI.updateGui(player)
+                    //delay(2000)
+                    Thread.sleep(1550)
+                    inputList.forEach { it.itemStack = ItemStack(Material.AIR) }
+                    if (itemOutput.itemStack != air) {
+                        player.giveItem(itemOutput.itemStack)
+                        itemOutput.itemStack = air
+                        itemOutput.itemStack = output
+                    } else {
+                        itemOutput.itemStack = output
+                    }
+                    Gui.isSuccess = true
+                    WuxieAPI.updateGui(player)
+                } else {
+                    WuxieAPI.closeGui(player)
+                    player.sendTitle("§4合成失败", "§c你的材料烧毁了！", 5, 70, 10)
+                    player.spawnParticle(Particle.FLAME, 1.0, 1.0, 1.0, 15, 0.0, 0.0, 0.0)
+                }
+            } catch (e: Exception) {
+                warning(e, e.stackTrace.first())
+            }
+        }
 
         return Gui
     }

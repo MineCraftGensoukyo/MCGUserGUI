@@ -5,60 +5,70 @@ import noppes.npcs.api.entity.IPlayer
 import org.bukkit.ChatColor
 import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
-import taboolib.library.xseries.getItemStack
+import taboolib.common.platform.function.warning
 
-class RecipeCheck {
+class RecipeCheck(private val pl: IPlayer<*>, private val slots: List<ItemStack>) {
     companion object {
         private val levelUp = intArrayOf(0, 10, 100, 1000, 100000000)
     }
 
-    fun RecipeCheck(pl: IPlayer<*>, slots: List<ItemStack>): ItemStack? {
+    fun RecipeCheck(): ItemStack? {
         var inPotIngredients: HashMap<String, Int> = HashMap<String, Int>()
-        slots.forEach {
-            var ingredient = it.itemMeta?.displayName
-            if (it.type == Material.APPLE) {
-                ingredient = "红苹果"
-            } else {
-                if (ingredient == null) {
+        val alchemyExpId = MainConfig.conf.getInt("alchemyExpId")
+        val alchemyLevelId = MainConfig.conf.getInt("alchemyLevelId")
+        try {
+            slots.forEach {
+                var ingredient = it.itemMeta?.displayName
+                if (it.type == Material.APPLE) {
+                    ingredient = "红苹果"
+                } else {
+                    if (ingredient == null) {
+                        return null
+                    }
+                    ingredient = ChatColor.stripColor(ingredient)
+                }
+                if (MainConfig.alchemyItems.contains(ingredient!!)) {
+                    val cnt = inPotIngredients[ingredient]
+                    if (cnt != null) {
+                        inPotIngredients[ingredient!!] = cnt + 1
+                    } else {
+                        inPotIngredients[ingredient!!] = 1
+                    }
+                } else {
                     return null
                 }
-                ingredient = ChatColor.stripColor(ingredient)
             }
-            if (MainConfig.alchemyItems.contains(ingredient)) {
-                val cnt = inPotIngredients[ingredient]
-                if (cnt != null) {
-                    inPotIngredients[ingredient!!] = cnt + 1
-                } else {
-                    inPotIngredients[ingredient!!] = 1
+            MainConfig.alchemyRecipes.recipeList.forEach nextRecipe@{ recipe ->
+                //配方匹配
+                if (recipe.size != inPotIngredients.size + 4) return@nextRecipe
+                if (recipe["level"]!! > pl.getFactionPoints(alchemyLevelId)) return@nextRecipe
+                recipe.forEach nextIngredient@{
+                    val ingredient = it.key
+                    if (ingredient == "name" || ingredient == "level") return@nextIngredient
+                    if (ingredient == "exp" || ingredient == "quantity") return@nextIngredient
+                    val cnt = inPotIngredients[ingredient] ?: return@nextRecipe
+                    if (cnt != it.value) return@nextRecipe
                 }
-            } else {
-                return null
-            }
-        }
-        MainConfig.alchemyRecipes.recipeList.forEach nextRecipe@{ recipe ->
-            //配方匹配
-            if (recipe.size != inPotIngredients.size + 4) return@nextRecipe
-            if (recipe["level"]!! > pl.getFactionPoints(143)) return@nextRecipe
-            recipe.forEach nextIngredient@{
-                val ingredient = it.key
-                if (ingredient == "name" || ingredient == "level") return@nextIngredient
-                if (ingredient == "exp" || ingredient == "quantity") return@nextIngredient
-                val cnt = inPotIngredients[ingredient] ?: return@nextRecipe
-                if (cnt != it.value) return@nextRecipe
-            }
 
-            //经验与升级
-            pl.addFactionPoints(144, recipe["exp"]!!)
-            val currentLevel = pl.getFactionPoints(143)
-            if (pl.getFactionPoints(144) >= levelUp[currentLevel]) {
-                pl.addFactionPoints(143, 1)
-                pl.addFactionPoints(144, -levelUp[currentLevel])
-                pl.message("您的炼金等级已升至${currentLevel + 1}级！")
-            }
+                //经验与升级
+                pl.addFactionPoints(alchemyExpId, recipe["exp"]!!)
+                val currentLevel = pl.getFactionPoints(alchemyLevelId)
+                if (pl.getFactionPoints(alchemyExpId) >= levelUp[currentLevel]) {
+                    pl.addFactionPoints(alchemyLevelId, 1)
+                    pl.addFactionPoints(alchemyExpId, -levelUp[currentLevel])
+                    pl.message("您的炼金等级已升至${currentLevel + 1}级！")
+                }
 
-            //返回item
-            val itemName = MainConfig.alchemyRecipes.recipeNameList[recipe["name"]!!]
-            return MainConfig.alchemyItems.getItemStack(itemName!!)
+                //返回item
+                val itemName = MainConfig.alchemyRecipes.recipeNameList[recipe["name"]!!]
+                //info("debug:${recipe["name"]}[${this}]")
+                //info("debug:$itemName[${this}]")
+                val res = MainConfig.alchemyItems.getItemStack(itemName!!)
+                //info("debug:$res[${this}]")
+                return res
+            }
+        } catch (e: Exception) {
+            warning(e, e.stackTrace.first())
         }
         return null
     }

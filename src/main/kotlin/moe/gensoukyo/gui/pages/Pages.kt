@@ -1,6 +1,8 @@
 package moe.gensoukyo.gui.pages
 
-object Pages{
+import kotlin.reflect.KClass
+
+object Pages {
     val pages = mapOf(
         "test" to TestPage,
         "alchemy" to AlchemyPage

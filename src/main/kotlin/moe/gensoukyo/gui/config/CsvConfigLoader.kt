@@ -1,17 +1,10 @@
 package moe.gensoukyo.gui.config
 
-import sun.applet.Main
 import taboolib.common.LifeCycle
-import taboolib.common.inject.Injector
 import taboolib.common.platform.Awake
 import taboolib.common.platform.function.info
-import taboolib.common.platform.function.releaseResourceFile
 import taboolib.common.platform.function.warning
-import taboolib.common.reflect.Ref
-import taboolib.module.configuration.ConfigLoader
 import java.io.File
-import java.lang.reflect.Field
-import java.util.function.Supplier
 
 object CsvConfigLoader {
     private var recipeList: MutableList<HashMap<String, Int>> = mutableListOf()

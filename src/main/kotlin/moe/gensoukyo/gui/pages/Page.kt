@@ -13,7 +13,7 @@ interface Page {
         WuxieAPI.openGui(player.player, this.getPage())
     }
 
-    fun showCachePage(player: Player){
+    fun showCachePage(player: Player) {
         val iPlayer = player.npcApi
         try {
             val guiData =
@@ -31,4 +31,5 @@ interface Page {
             warning(e)
         }
     }
+
 }

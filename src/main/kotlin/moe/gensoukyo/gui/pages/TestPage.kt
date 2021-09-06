@@ -10,7 +10,7 @@ import moe.gensoukyo.gui.util.Pos
 import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
 
-class TestPage : Page{
+class TestPage : Page {
     companion object {
         private const val GUI_BG_TEST1 = "https://cdn.jsdelivr.net/gh/Zake-arias/myimgs//imgs/GUI_BG_TEST1.png"
         private const val X_DEVIATION = 0
@@ -20,7 +20,6 @@ class TestPage : Page{
         private const val BTN_1_URL2 = "https://cdn.jsdelivr.net/gh/Zake-arias/myimgs//imgs/btn_1%20(1).png"
         private const val BTN_1_URL3 = "https://cdn.jsdelivr.net/gh/Zake-arias/myimgs//imgs/btn_1%20(2).png"
     }
-
 
 
     private val posGuiTest1 = Pos(-1, -1, 176, 166, X_DEVIATION, Y_DEVIATION)

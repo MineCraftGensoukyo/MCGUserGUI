@@ -1,10 +1,12 @@
 package moe.gensoukyo.gui
 
 import moe.gensoukyo.gui.config.CsvConfigLoader
+import moe.gensoukyo.gui.config.MainConfig.reload
 import moe.gensoukyo.gui.pages.TestPage
 import org.bukkit.entity.Player
 import taboolib.common.platform.Plugin
 import taboolib.common.platform.ProxyCommandSender
+import taboolib.common.platform.command.PermissionDefault
 import taboolib.common.platform.command.command
 import taboolib.common.platform.function.info
 import taboolib.common.platform.function.pluginId
@@ -14,7 +16,7 @@ import moe.gensoukyo.gui.config.MainConfig as configs
 import taboolib.module.chat.TellrawJson as TJ
 
 object MCGUserGUI : Plugin() {
-    private val mainCommandList = hashMapOf<String,String>(
+    private val mainCommandList = hashMapOf<String, String>(
         "help" to " -- 获取帮助\n",
         "version" to " -- 查看插件版本\n",
         "reload" to " -- 重载配置\n",
@@ -27,45 +29,43 @@ object MCGUserGUI : Plugin() {
 
     override fun onEnable() {
 
-        command("mcggui"){
+        command("mcggui", permissionDefault = PermissionDefault.FALSE, permissionMessage = "§c你没有使用这个指令的权限！") {
             //一级子指令参数
-            literal("help",optional = true){
-                execute<taboolib.common.platform.ProxyCommandSender> { sender, _, _->
+            literal("help", optional = true) {
+                execute<taboolib.common.platform.ProxyCommandSender> { sender, _, _ ->
                     val helpText = StringBuilder()
                     helpText.append("§6 ===============================\n")
                     moe.gensoukyo.gui.MCGUserGUI.mainCommandList.forEach { (k, v) ->
-                        helpText.append(k+v)
+                        helpText.append(k + v)
                     }
                     helpText.append("===============================\n")
                     sender.sendMessage(helpText.toString())
                 }
             }
-            literal("version",optional = true){
+            literal("version", optional = true) {
                 execute<ProxyCommandSender> { sender, _, _ ->
                     val description = BukkitPlugin.getInstance().description
-                    sender.sendMessage("§6${pluginId} --- ${pluginVersion}")
+                    sender.sendMessage("§6${pluginId} --- $pluginVersion")
                 }
             }
-            literal("reload",optional = true){
-                execute<ProxyCommandSender>{ sender, _, _ ->
+            literal("reload", optional = true) {
+                execute<ProxyCommandSender> { sender, _, _ ->
                     try {
                         configs.conf.reload()
                         configs.alchemyItems.reload()
                         sender.sendMessage("§6重载成功！ - Version:${pluginVersion}")
                         configs.alchemyRecipes.reload()
                         sender.sendMessage("§6CSV配置重载成功！ - Version:${CsvConfigLoader.version}")
-                    }catch (e :Exception){
+                    } catch (e: Exception) {
                         sender.sendMessage("§6重载失败！ - Err:${e}")
                     }
                 }
             }
-            literal("test",optional = true){
+            literal("test", optional = true) {
                 execute<Player> { sender, _, _ ->
-                    val testPage = TestPage()
-                    sender.sendMessage("测试GUI已开启${testPage}")
-                    testPage.showPage(sender)
+                    //configs.alchemyItems.setItemStack("test", ItemStack(Material.APPLE))
                 }
-                literal("cache",optional = true){
+                literal("cache", optional = true) {
                     execute<Player> { sender, _, _ ->
                         val testPage = TestPage()
                         sender.sendMessage("测试GUI已开启${testPage}")
@@ -73,21 +73,21 @@ object MCGUserGUI : Plugin() {
                     }
                 }
             }
-            literal("coftest",optional = true){
-                execute <ProxyCommandSender> { sender, _, _ ->
-                    configs.conf.getKeys(false).forEach{
+            literal("coftest", optional = true) {
+                execute<ProxyCommandSender> { sender, _, _ ->
+                    configs.conf.getKeys(false).forEach {
                         sender.sendMessage(it)
                     }
                     sender.sendMessage("alchemyItems")
-                    configs.alchemyItems.getKeys(false).forEach{
+                    configs.alchemyItems.getKeys(false).forEach {
                         sender.sendMessage(it)
                     }
 
                 }
             }
-            literal("csvtest",optional = true){
-                execute<ProxyCommandSender>{ sender,_,_ ->
-                    configs.alchemyRecipes.recipeList.forEach{
+            literal("csvtest", optional = true) {
+                execute<ProxyCommandSender> { sender, _, _ ->
+                    configs.alchemyRecipes.recipeList.forEach {
                         sender.sendMessage(it.toString())
                     }
                 }
@@ -104,7 +104,8 @@ object MCGUserGUI : Plugin() {
             }
         }
         info("MCGUserGUI加载完毕！")
-        info("""§6
+        info(
+            """§6
             =====================================================================
                  __  __  _____ _____ _    _                _____ _    _ _____ 
                 |  \/  |/ ____/ ____| |  | |              / ____| |  | |_   _|
@@ -116,10 +117,10 @@ object MCGUserGUI : Plugin() {
                                 Author  - ZakeArias,DavidWang19
                                 Version - $pluginVersion
              ====================================================================
-        """.trimIndent())
+        """.trimIndent()
+        )
 
     }
-
 
 
     override fun onDisable() {
