@@ -30,9 +30,9 @@ class RecipeCheck(private val pl: IPlayer<*>, private val slots: List<ItemStack>
                 if (MainConfig.alchemyItems.contains(ingredient!!)) {
                     val cnt = inPotIngredients[ingredient]
                     if (cnt != null) {
-                        inPotIngredients[ingredient!!] = cnt + 1
+                        inPotIngredients[ingredient!!] = cnt + it.amount
                     } else {
-                        inPotIngredients[ingredient!!] = 1
+                        inPotIngredients[ingredient!!] = it.amount
                     }
                 } else {
                     return null
