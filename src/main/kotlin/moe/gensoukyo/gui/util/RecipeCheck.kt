@@ -12,7 +12,7 @@ class RecipeCheck(private val pl: IPlayer<*>, private val slots: List<ItemStack>
         private val levelUp = intArrayOf(0, 10, 100, 1000, 100000000)
     }
 
-    fun RecipeCheck(): ItemStack? {
+    fun run(): ItemStack? {
         var inPotIngredients: HashMap<String, Int> = HashMap<String, Int>()
         val alchemyExpId = MainConfig.conf.getInt("alchemyExpId")
         val alchemyLevelId = MainConfig.conf.getInt("alchemyLevelId")
@@ -31,8 +31,12 @@ class RecipeCheck(private val pl: IPlayer<*>, private val slots: List<ItemStack>
                     val cnt = inPotIngredients[ingredient]
                     if (cnt != null) {
                         inPotIngredients[ingredient!!] = cnt + it.amount
+                        //info("debug:${it.amount}[${this}]")
+                        //info("debug:${inPotIngredients}[${this}]")
                     } else {
                         inPotIngredients[ingredient!!] = it.amount
+                        //info("debug:${it.amount}[${this}]")
+                        //info("debug:${inPotIngredients}[${this}]")
                     }
                 } else {
                     return null

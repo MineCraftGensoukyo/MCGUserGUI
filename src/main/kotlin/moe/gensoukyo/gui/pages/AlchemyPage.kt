@@ -12,7 +12,6 @@ import org.bukkit.Particle
 import org.bukkit.inventory.ItemStack
 import taboolib.common.platform.function.info
 import taboolib.common.platform.function.warning
-import taboolib.common.reflect.Reflex.Companion.invokeMethod
 import taboolib.platform.util.giveItem
 
 class AlchemyPage : Page {
@@ -111,14 +110,17 @@ class AlchemyPage : Page {
             try {//WuxieAPI.updateGui(player)
                 val inputItems = inputList.map { it.itemStack }
                 info("玩家${player}在${Gui.id} - ${Gui}输入\n${inputItems.map { it.itemMeta?.displayName }}")
-                val output = RecipeCheck(player.npcApi, inputItems).RecipeCheck()
+                val output = RecipeCheck(player.npcApi, inputItems).run()
                 if (output != null) {
                     coolingTag.currentTime = 0
                     coolingTag.updateTime()
+                    btnOutput.isCanPress = false
                     WuxieAPI.updateGui(player)
                     //delay(2000)
-                    Thread.sleep(1550)
                     inputList.forEach { it.itemStack = ItemStack(Material.AIR) }
+                    WuxieAPI.updateGui(player)
+                    Thread.sleep(1550)
+
                     if (itemOutput.itemStack != air) {
                         player.giveItem(itemOutput.itemStack)
                         itemOutput.itemStack = air
@@ -127,12 +129,14 @@ class AlchemyPage : Page {
                         itemOutput.itemStack = output
                     }
                     Gui.isSuccess = true
+                    btnOutput.isCanPress = true
                     WuxieAPI.updateGui(player)
                 } else {
                     WuxieAPI.closeGui(player)
                     player.sendTitle("§4合成失败", "§c你的材料烧毁了！", 5, 70, 10)
                     player.spawnParticle(Particle.FLAME, 1.0, 1.0, 1.0, 15, 0.0, 0.0, 0.0)
                 }
+
             } catch (e: Exception) {
                 warning(e, e.stackTrace.first())
             }
