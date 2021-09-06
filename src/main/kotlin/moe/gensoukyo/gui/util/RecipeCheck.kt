@@ -18,6 +18,7 @@ class RecipeCheck(private val pl: IPlayer<*>, private val slots: List<ItemStack>
         val alchemyLevelId = MainConfig.conf.getInt("alchemyLevelId")
         try {
             slots.forEach {
+                if (it == null || it == ItemStack(Material.AIR)) return@forEach
                 var ingredient = it.itemMeta?.displayName
                 if (it.type == Material.APPLE) {
                     ingredient = "红苹果"
