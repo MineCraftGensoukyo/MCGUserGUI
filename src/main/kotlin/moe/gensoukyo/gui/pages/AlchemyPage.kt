@@ -121,7 +121,7 @@ class AlchemyPage : Page {
                     WuxieAPI.updateGui(player)
                     Thread.sleep(1550)
 
-                    if (itemOutput.itemStack != air) {
+                    if (itemOutput.itemStack != air && itemOutput.itemStack !=  null) {
                         player.giveItem(itemOutput.itemStack)
                         itemOutput.itemStack = air
                         itemOutput.itemStack = output
