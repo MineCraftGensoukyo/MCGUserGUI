@@ -32,7 +32,7 @@ object CsvConfigLoader {
                             currentRecipe["name"] = cnt
                             recipeNameList[cnt] = it
                         }
-                        2 -> currentRecipe["level"] = it.toInt()
+                        2 -> currentRecipe["unlockId"] = it.toInt()
                         3 -> currentRecipe["exp"] = it.toInt()
                         4 -> currentRecipe["quantity"] = it.toInt()
                         else -> {

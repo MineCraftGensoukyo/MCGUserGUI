@@ -9,7 +9,7 @@ import taboolib.common.platform.function.warning
 
 class RecipeCheck(private val pl: IPlayer<*>, private val slots: List<ItemStack>) {
     companion object {
-        private val levelUp = intArrayOf(0, 10, 100, 1000, 100000000)
+        private val levelUp = intArrayOf(0, 100000000, 100000000, 100000000, 100000000)
     }
 
     fun run(): ItemStack? {
@@ -46,7 +46,12 @@ class RecipeCheck(private val pl: IPlayer<*>, private val slots: List<ItemStack>
             MainConfig.alchemyRecipes.recipeList.forEach nextRecipe@{ recipe ->
                 //配方匹配
                 if (recipe.size != inPotIngredients.size + 4) return@nextRecipe
-                if (recipe["level"]!! > pl.getFactionPoints(alchemyLevelId)) return@nextRecipe
+                val unlockId = recipe["unlockId"]!!
+                if (unlockId > 900) {
+                    if (!pl.hasReadDialog(unlockId)) return@nextRecipe
+                } else {
+                    if (!pl.hasFinishedQuest(unlockId)) return@nextRecipe
+                }
                 recipe.forEach nextIngredient@{
                     val ingredient = it.key
                     if (ingredient == "name" || ingredient == "level") return@nextIngredient
