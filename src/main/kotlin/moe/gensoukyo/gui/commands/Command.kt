@@ -20,7 +20,7 @@ object Command {
     /*@CommandBody*/
     val main = mainCommand {
         ///一级子指令参数
-        dynamic(false) {
+        dynamic(optional = false) {
             suggestion<ProxyPlayer> { _, _ ->
                 mainCommandList
             }

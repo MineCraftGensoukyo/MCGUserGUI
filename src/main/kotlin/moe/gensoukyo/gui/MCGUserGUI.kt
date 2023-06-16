@@ -1,7 +1,5 @@
 package moe.gensoukyo.gui
 
-import moe.gensoukyo.gui.config.CsvConfigLoader
-import moe.gensoukyo.gui.config.MainConfig.reload
 import moe.gensoukyo.gui.pages.TestPage
 import org.bukkit.entity.Player
 import taboolib.common.platform.Plugin
@@ -52,10 +50,7 @@ object MCGUserGUI : Plugin() {
                 execute<ProxyCommandSender> { sender, _, _ ->
                     try {
                         configs.conf.reload()
-                        configs.alchemyItems.reload()
                         sender.sendMessage("§6重载成功！ - Version:${pluginVersion}")
-                        configs.alchemyRecipes.reload()
-                        sender.sendMessage("§6CSV配置重载成功！ - Version:${CsvConfigLoader.version}")
                     } catch (e: Exception) {
                         sender.sendMessage("§6重载失败！ - Err:${e}")
                     }
@@ -70,25 +65,6 @@ object MCGUserGUI : Plugin() {
                         val testPage = TestPage()
                         sender.sendMessage("测试GUI已开启${testPage}")
                         testPage.showCachePage(sender)
-                    }
-                }
-            }
-            literal("coftest", optional = true) {
-                execute<ProxyCommandSender> { sender, _, _ ->
-                    configs.conf.getKeys(false).forEach {
-                        sender.sendMessage(it)
-                    }
-                    sender.sendMessage("alchemyItems")
-                    configs.alchemyItems.getKeys(false).forEach {
-                        sender.sendMessage(it)
-                    }
-
-                }
-            }
-            literal("csvtest", optional = true) {
-                execute<ProxyCommandSender> { sender, _, _ ->
-                    configs.alchemyRecipes.recipeList.forEach {
-                        sender.sendMessage(it.toString())
                     }
                 }
             }
@@ -114,7 +90,7 @@ object MCGUserGUI : Plugin() {
                 | |  | | |___| |__| | |__| \__ \  __/ |  | |__| | |__| |_| |_ 
                 |_|  |_|\_____\_____|\____/|___/\___|_|   \_____|\____/|_____|
                                 $pluginId
-                                Author  - ZakeArias,DavidWang19
+                                Author  - ZakeArias, DavidWang19
                                 Version - $pluginVersion
              ====================================================================
         """.trimIndent()

@@ -2,7 +2,7 @@ val coroutines_version = "1.4.2"
 
 plugins {
     java
-    id("io.izzel.taboolib") version "1.26"
+    id("io.izzel.taboolib") version "1.34"
     id("org.jetbrains.kotlin.jvm") version "1.5.10"
 }
 
@@ -14,7 +14,7 @@ taboolib {
     install("module-configuration")
     install("module-lang")
     classifier = null
-    version = "6.0.0-53"
+    version = "6.0.8-9"
     description {
         desc("本插件用与为MC幻想乡RPG内容提供图形用户界面的支持")
         contributors {
