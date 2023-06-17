@@ -135,31 +135,32 @@ object EquipmentEnhance {
         )
     }
 
-    fun run(pl: Player, equip: ItemStack?, stone: ItemStack?): ItemStack? {
+    // pair.first: 0:未强化 1:强化失败 2:强化成功
+    fun run(pl: Player, equip: ItemStack?, stone: ItemStack?): Pair<Int, ItemStack?> {
         if (equip == null || equip.isAir) {
             pl.sendMessage("§c请放入武器！")
-            return null
+            return Pair(0, null)
         }
         if (stone == null || stone.isAir) {
             pl.sendMessage("§c请放入强化石！")
-            return null
+            return Pair(0, null)
         }
         val equipInfo = getEquipmentInfo(equip)
         if (equipInfo["validity"] == 0) {
             pl.sendMessage("§c请放入合法武器！")
-            return null
+            return Pair(0, null)
         }
         val limitLevel = equipInfo["limitLevel"]!!
         val enhanceLevel = equipInfo["enhanceLevel"]!!
         val quality = equipInfo["quality"]!!
         if (enhanceLevel == MAX_ENHANCE_LEVEL) {
             pl.sendMessage("§c武器已经强化到最高等级！")
-            return null
+            return Pair(0, null)
         }
         val stoneInfo = getStoneInfo(stone)
         if (stoneInfo["validity"] == 0) {
             pl.sendMessage("§c请放入合法强化石！")
-            return null
+            return Pair(0, null)
         }
         val enhanceLevelLow = stoneInfo["enhanceLevelLow"]!!
         val enhanceLevelHigh = stoneInfo["enhanceLevelHigh"]!!
@@ -168,18 +169,18 @@ object EquipmentEnhance {
         val successProb = stoneInfo["successProb"]!!
         if (enhanceLevelLow > enhanceLevel || enhanceLevelHigh < enhanceLevel) {
             pl.sendMessage("§c强化石与武器当前强化等级不符！")
-            return null
+            return Pair(0, null)
         }
         if (limitLevelLow > limitLevel || limitLevelHigh < limitLevel) {
             pl.sendMessage("§c强化石与武器等级不符！")
-            return null
+            return Pair(0, null)
         }
         val equipLore = equip.itemMeta?.lore!!
         val newEquip = equip.clone()
         val isSucceed = (1..100).random() <= successProb
         if (!isSucceed) {
             pl.sendMessage("§c强化失败！")
-            return null
+            return Pair(1, null)
         }
         val newEnhanceLevel = enhanceLevel + 1
         val newEquipLore = mutableListOf<String>()
@@ -220,6 +221,6 @@ object EquipmentEnhance {
         newMeta.lore = newEquipLore
         newEquip.itemMeta = newMeta
         pl.sendMessage("§a强化成功！")
-        return newEquip
+        return Pair(2, newEquip)
     }
 }

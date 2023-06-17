@@ -90,7 +90,7 @@ class EnhancePage : Page{
                 imageSuccess.h = 0
                 imageFail.w = 0
                 imageFail.h = 0
-                val ret = EquipmentEnhance.run(pl, equipmentSlot.itemStack, stoneSlot.itemStack)
+                val (code, ret) = EquipmentEnhance.run(pl, equipmentSlot.itemStack, stoneSlot.itemStack)
                 if (ret != null) {
                     equipmentSlot.itemStack = ret
                     val newStoneStack = stoneSlot.itemStack.clone()
@@ -101,6 +101,11 @@ class EnhancePage : Page{
                     EnhancePageTools.refreshEquip(equipmentSlot.itemStack, enhanceLevelText)
                     EnhancePageTools.refreshStone(stoneSlot.itemStack, stoneLevelText, stoneProbText)
                 } else {
+                    if (code == 1) {
+                        val newStoneStack = stoneSlot.itemStack.clone()
+                        newStoneStack.amount -= 1
+                        stoneSlot.itemStack = newStoneStack
+                    }
                     imageFail.w = STATUS_W
                     imageFail.h = STATUS_H
                 }
