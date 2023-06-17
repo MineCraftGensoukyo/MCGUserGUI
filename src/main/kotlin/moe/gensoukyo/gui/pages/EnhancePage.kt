@@ -14,11 +14,11 @@ import taboolib.platform.util.isAir
 
 class EnhancePage : Page{
     companion object {
-        private const val BG_URL = "https://cdn.jsdelivr.net/gh/MineCraftGensoukyo/MCGImages@main/img/Enhance_BG.png"
-        private const val BTN_URL_1 = "https://cdn.jsdelivr.net/gh/MineCraftGensoukyo/MCGImages@main/img/Enhance_BTN_1.png"
-        private const val BTN_URL_2 = "https://cdn.jsdelivr.net/gh/MineCraftGensoukyo/MCGImages@main/img/Enhance_BTN_2.png"
-        private const val BTN_URL_3 = "https://cdn.jsdelivr.net/gh/MineCraftGensoukyo/MCGImages@main/img/Enhance_BTN_3.png"
-        private const val BLANK_URL = "https://cdn.jsdelivr.net/gh/MineCraftGensoukyo/MCGImages@main/img/Blank.png"
+        private const val BG_URL = "https://cdn.jsdelivr.net/gh/MineCraftGensoukyo/MCGImages/img/Enhance_BG.png"
+        private const val BTN_URL_1 = "https://cdn.jsdelivr.net/gh/MineCraftGensoukyo/MCGImages/img/Enhance_BTN_1.png"
+        private const val BTN_URL_2 = "https://cdn.jsdelivr.net/gh/MineCraftGensoukyo/MCGImages/img/Enhance_BTN_2.png"
+        private const val BTN_URL_3 = "https://cdn.jsdelivr.net/gh/MineCraftGensoukyo/MCGImages/img/Enhance_BTN_3.png"
+        private const val BLANK_URL = "https://cdn.jsdelivr.net/gh/MineCraftGensoukyo/MCGImages/img/Blank.png"
     }
 
     private val GUI_W = conf["enhance.gui.w"] as Int
