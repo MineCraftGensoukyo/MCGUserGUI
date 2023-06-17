@@ -1,24 +1,25 @@
 package moe.gensoukyo.gui
 
+import moe.gensoukyo.gui.pages.EnhancePage
 import moe.gensoukyo.gui.pages.TestPage
+import moe.gensoukyo.gui.util.ClearCache
 import org.bukkit.entity.Player
 import taboolib.common.platform.Plugin
 import taboolib.common.platform.ProxyCommandSender
 import taboolib.common.platform.command.PermissionDefault
 import taboolib.common.platform.command.command
-import taboolib.common.platform.function.info
-import taboolib.common.platform.function.pluginId
-import taboolib.common.platform.function.pluginVersion
+import taboolib.common.platform.function.*
 import taboolib.platform.BukkitPlugin
 import moe.gensoukyo.gui.config.MainConfig as configs
 import taboolib.module.chat.TellrawJson as TJ
 
 object MCGUserGUI : Plugin() {
-    private val mainCommandList = hashMapOf<String, String>(
+    private val mainCommandList = hashMapOf(
         "help" to " -- 获取帮助\n",
         "version" to " -- 查看插件版本\n",
         "reload" to " -- 重载配置\n",
-        "test" to " -- 打开测试GUI\n"
+        "test" to " -- 打开测试GUI\n",
+        "enhance [player]" to " -- 打开强化GUI\n"
     )
 
     override fun onLoad() {
@@ -27,7 +28,7 @@ object MCGUserGUI : Plugin() {
 
     override fun onEnable() {
 
-        command("mcggui", permissionDefault = PermissionDefault.FALSE, permissionMessage = "§c你没有使用这个指令的权限！") {
+        command("mcggui", permissionDefault = PermissionDefault.OP, permissionMessage = "§c你没有使用这个指令的权限！") {
             //一级子指令参数
             literal("help", optional = true) {
                 execute<taboolib.common.platform.ProxyCommandSender> { sender, _, _ ->
@@ -50,6 +51,11 @@ object MCGUserGUI : Plugin() {
                 execute<ProxyCommandSender> { sender, _, _ ->
                     try {
                         configs.conf.reload()
+                        if (configs.conf["clearCache"] as Boolean) {
+                            onlinePlayers().forEach { player ->
+                                ClearCache.run(player.cast())
+                            }
+                        }
                         sender.sendMessage("§6重载成功！ - Version:${pluginVersion}")
                     } catch (e: Exception) {
                         sender.sendMessage("§6重载失败！ - Err:${e}")
@@ -58,13 +64,23 @@ object MCGUserGUI : Plugin() {
             }
             literal("test", optional = true) {
                 execute<Player> { sender, _, _ ->
-                    //configs.alchemyItems.setItemStack("test", ItemStack(Material.APPLE))
+                    val testPage = TestPage()
+                    sender.sendMessage("测试GUI已开启${testPage}")
+                    testPage.showCachePage(sender)
                 }
-                literal("cache", optional = true) {
-                    execute<Player> { sender, _, _ ->
-                        val testPage = TestPage()
-                        sender.sendMessage("测试GUI已开启${testPage}")
-                        testPage.showCachePage(sender)
+            }
+            literal("enhance", optional = true) {
+                execute<Player> { sender, _, _ ->
+                    val enhancePage = EnhancePage()
+                    enhancePage.showCachePage(sender)
+                }
+                dynamic {
+                    suggestion<ProxyCommandSender> { sender, context ->
+                        onlinePlayers().map { it.name }
+                    }
+                    execute<ProxyCommandSender> { _, _, argument ->
+                        val enhancePage = EnhancePage()
+                        enhancePage.showCachePage(getProxyPlayer(argument)!!.cast())
                     }
                 }
             }
@@ -90,7 +106,7 @@ object MCGUserGUI : Plugin() {
                 | |  | | |___| |__| | |__| \__ \  __/ |  | |__| | |__| |_| |_ 
                 |_|  |_|\_____\_____|\____/|___/\___|_|   \_____|\____/|_____|
                                 $pluginId
-                                Author  - ZakeArias, DavidWang19
+                                Author  - DavidWang19, ZakeArias
                                 Version - $pluginVersion
              ====================================================================
         """.trimIndent()

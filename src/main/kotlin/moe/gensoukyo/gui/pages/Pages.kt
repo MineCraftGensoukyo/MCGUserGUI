@@ -2,6 +2,7 @@ package moe.gensoukyo.gui.pages
 
 object Pages {
     val pages = mapOf(
-        "test" to TestPage
+        "测试UI" to TestPage,
+        "强化UI" to EnhancePage
     )
 }
