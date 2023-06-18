@@ -7,6 +7,7 @@ import me.wuxie.wakeshow.wakeshow.api.event.PlayerPostClickComponentEvent
 import me.wuxie.wakeshow.wakeshow.ui.component.WSlot
 import me.wuxie.wakeshow.wakeshow.ui.component.WTextList
 import moe.gensoukyo.gui.pages.EnhancePageTools
+import moe.gensoukyo.gui.pages.ProficiencyPageTools
 import moe.gensoukyo.gui.util.ClearCache
 import org.bukkit.event.player.PlayerLoginEvent
 import taboolib.common.platform.event.EventPriority
@@ -28,6 +29,24 @@ object EventListener {
             if (stoneIn != null) e.player.giveItem(stoneIn)
             equip?.amount = 0
             stoneIn?.amount = 0
+        }
+        if (e.screen.id == "熟练度UI") {
+            val weaponFrom =
+                (e.screen.container.getComponent("weapon_from") as WSlot).itemStack
+            val weaponTo =
+                (e.screen.container.getComponent("weapon_to") as WSlot).itemStack
+            val weaponExtract =
+                (e.screen.container.getComponent("weapon_extract") as WSlot).itemStack
+            val stoneExtract =
+                (e.screen.container.getComponent("stone_extract") as WSlot).itemStack
+            if (weaponFrom != null) e.player.giveItem(weaponFrom)
+            if (weaponTo != null) e.player.giveItem(weaponTo)
+            if (weaponExtract != null) e.player.giveItem(weaponExtract)
+            if (stoneExtract != null) e.player.giveItem(stoneExtract)
+            weaponFrom?.amount = 0
+            weaponTo?.amount = 0
+            weaponExtract?.amount = 0
+            stoneExtract?.amount = 0
         }
     }
 
@@ -59,6 +78,29 @@ object EventListener {
                 return
             }
         }
+        if (e.screen.id == "熟练度UI") {
+            if (e.component.id == "weapon_from") {
+                val from = (e.component as WSlot).itemStack
+                val fromText = e.screen.container.getComponent("weapon_from_text") as WTextList
+                ProficiencyPageTools.refreshWeaponTransfer(from, fromText)
+                WuxieAPI.updateGui(e.player)
+                return
+            }
+            if (e.component.id == "weapon_to") {
+                val to = (e.component as WSlot).itemStack
+                val toText = e.screen.container.getComponent("weapon_to_text") as WTextList
+                ProficiencyPageTools.refreshWeaponTransfer(to, toText)
+                WuxieAPI.updateGui(e.player)
+                return
+            }
+            if (e.component.id == "weapon_extract") {
+                val extract = (e.component as WSlot).itemStack
+                val extractText = e.screen.container.getComponent("weapon_extract_text") as WTextList
+                ProficiencyPageTools.refreshWeaponExtract(extract, extractText)
+                WuxieAPI.updateGui(e.player)
+                return
+            }
+        }
     }
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
@@ -71,6 +113,11 @@ object EventListener {
             (e.screen.container.getComponent("enhance_level_text") as WTextList).scale = 0.0
             (e.screen.container.getComponent("stone_level_text") as WTextList).scale = 0.0
             (e.screen.container.getComponent("stone_prob_text") as WTextList).scale = 0.0
+        }
+        if (e.screen.id == "熟练度UI") {
+            (e.screen.container.getComponent("weapon_from_text") as WTextList).scale = 0.0
+            (e.screen.container.getComponent("weapon_to_text") as WTextList).scale = 0.0
+            (e.screen.container.getComponent("weapon_extract_text") as WTextList).scale = 0.0
         }
     }
 

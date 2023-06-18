@@ -1,6 +1,7 @@
 package moe.gensoukyo.gui
 
 import moe.gensoukyo.gui.pages.EnhancePage
+import moe.gensoukyo.gui.pages.ProficiencyPage
 import moe.gensoukyo.gui.pages.TestPage
 import moe.gensoukyo.gui.util.ClearCache
 import org.bukkit.entity.Player
@@ -75,11 +76,26 @@ object MCGUserGUI : Plugin() {
                     enhancePage.showCachePage(sender)
                 }
                 dynamic {
-                    suggestion<ProxyCommandSender> { sender, context ->
+                    suggestion<ProxyCommandSender> { _, _ ->
                         onlinePlayers().map { it.name }
                     }
                     execute<ProxyCommandSender> { _, _, argument ->
                         val enhancePage = EnhancePage()
+                        enhancePage.showCachePage(getProxyPlayer(argument)!!.cast())
+                    }
+                }
+            }
+            literal("proficiency", optional = true) {
+                execute<Player> { sender, _, _ ->
+                    val enhancePage = ProficiencyPage()
+                    enhancePage.showCachePage(sender)
+                }
+                dynamic {
+                    suggestion<ProxyCommandSender> { _, _ ->
+                        onlinePlayers().map { it.name }
+                    }
+                    execute<ProxyCommandSender> { _, _, argument ->
+                        val enhancePage = ProficiencyPage()
                         enhancePage.showCachePage(getProxyPlayer(argument)!!.cast())
                     }
                 }

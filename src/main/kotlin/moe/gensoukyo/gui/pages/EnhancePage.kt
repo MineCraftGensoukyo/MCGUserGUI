@@ -22,60 +22,30 @@ class EnhancePage : Page{
     private val SUCCESS_URL = "https://cdn.jsdelivr.net/gh/MineCraftGensoukyo/MCGImages@${VERSION}/img/Enhance_Success.png"
     private val FAIL_URL = "https://cdn.jsdelivr.net/gh/MineCraftGensoukyo/MCGImages@${VERSION}/img/Enhance_Fail.png"
 
-    private val GUI_W = conf["enhance.gui.w"] as Int
-    private val GUI_H = conf["enhance.gui.h"] as Int
-    private val GUI_SL = conf["enhance.gui.sl"] as Int
-    private val GUI_ST = conf["enhance.gui.st"] as Int
-    private val EQUIP_X = conf["enhance.equip.x"] as Int
-    private val EQUIP_Y = conf["enhance.equip.y"] as Int
-    private val STONE_X = conf["enhance.stone.x"] as Int
-    private val STONE_Y = conf["enhance.stone.y"] as Int
-    private val BTN_X = conf["enhance.btn.x"] as Int
-    private val BTN_Y = conf["enhance.btn.y"] as Int
-    private val BTN_W = conf["enhance.btn.w"] as Int
-    private val BTN_H = conf["enhance.btn.h"] as Int
-    private val STATUS_X = conf["enhance.status.x"] as Int
-    private val STATUS_Y = conf["enhance.status.y"] as Int
-    private val STATUS_W = conf["enhance.status.w"] as Int
-    private val STATUS_H = conf["enhance.status.h"] as Int
-    private val ENHANCE_LEVEL_X = conf["enhance.enhanceLevel.x"] as Int
-    private val ENHANCE_LEVEL_Y = conf["enhance.enhanceLevel.y"] as Int
-    private val ENHANCE_LEVEL_W = conf["enhance.enhanceLevel.w"] as Int
-    private val ENHANCE_LEVEL_H = conf["enhance.enhanceLevel.h"] as Int
-    private val STONE_LEVEL_X = conf["enhance.stoneLevel.x"] as Int
-    private val STONE_LEVEL_Y = conf["enhance.stoneLevel.y"] as Int
-    private val STONE_LEVEL_W = conf["enhance.stoneLevel.w"] as Int
-    private val STONE_LEVEL_H = conf["enhance.stoneLevel.h"] as Int
-    private val STONE_PROB_X = conf["enhance.stoneProb.x"] as Int
-    private val STONE_PROB_Y = conf["enhance.stoneProb.y"] as Int
-    private val STONE_PROB_W = conf["enhance.stoneProb.w"] as Int
-    private val STONE_PROB_H = conf["enhance.stoneProb.h"] as Int
-
     private val enhanceGui =
-        WInventoryScreen("强化UI", BG_URL, -1, -1, GUI_W, GUI_H, GUI_SL, GUI_ST)
+        WInventoryScreen("强化UI", BG_URL, -1, -1, 190, 190, 15, 110)
     private val guiContainer = enhanceGui.container
     private val stoneSlot =
-        WSlot(guiContainer, "stone", ItemStack(Material.AIR), STONE_X, STONE_Y)
+        WSlot(guiContainer, "stone", ItemStack(Material.AIR), 50, 41)
     private val equipmentSlot =
-        WSlot(guiContainer, "equipment", ItemStack(Material.AIR), EQUIP_X, EQUIP_Y)
+        WSlot(guiContainer, "equipment", ItemStack(Material.AIR), 101, 41)
     private val buttonOutput =
         WButton(guiContainer, "button_output", "",
-            BTN_URL_1, BTN_URL_2, BTN_URL_3, BTN_X, BTN_Y)
+            BTN_URL_1, BTN_URL_2, BTN_URL_3, 117, 37)
     private val imageSuccess =
         WImage(guiContainer, "image_success",
-            SUCCESS_URL, STATUS_X, STATUS_Y, 0, 0)
+            SUCCESS_URL, 152, 38, 0, 0)
     private val imageFail =
         WImage(guiContainer, "image_fail",
-            FAIL_URL, STATUS_X, STATUS_Y, 0, 0)
+            FAIL_URL, 152, 38, 0, 0)
     private val enhanceLevelText =
-        WTextList(guiContainer, "enhance_level_text", listOf(),
-            ENHANCE_LEVEL_X, ENHANCE_LEVEL_Y, ENHANCE_LEVEL_W, ENHANCE_LEVEL_H)
+        WTextList(guiContainer, "enhance_level_text", listOf(), 150, 30, 60, 0)
     private val stoneLevelText =
-        WTextList(guiContainer, "stone_level_text", listOf(),
-            STONE_LEVEL_X, STONE_LEVEL_Y, STONE_LEVEL_W, STONE_LEVEL_H)
+        WTextList(guiContainer, "stone_level_text", listOf(), 9, 20, 60, 0)
     private val stoneProbText =
-        WTextList(guiContainer, "stone_prob_text", listOf(),
-            STONE_PROB_X, STONE_PROB_Y, STONE_PROB_W, STONE_PROB_H)
+        WTextList(guiContainer, "stone_prob_text", listOf(), 25, 30, 20, 0)
+    private val titleText =
+        WTextList(guiContainer, "title_text", listOf("§1§l强  化"), 80, 4, 40, 20)
 
     override fun getPage(): WxScreen {
         equipmentSlot.isCanDrag = true
@@ -96,8 +66,8 @@ class EnhancePage : Page{
                     val newStoneStack = stoneSlot.itemStack.clone()
                     newStoneStack.amount -= 1
                     stoneSlot.itemStack = newStoneStack
-                    imageSuccess.w = STATUS_W
-                    imageSuccess.h = STATUS_H
+                    imageSuccess.w = 24
+                    imageSuccess.h = 24
                     EnhancePageTools.refreshEquip(equipmentSlot.itemStack, enhanceLevelText)
                     EnhancePageTools.refreshStone(stoneSlot.itemStack, stoneLevelText, stoneProbText)
                 } else {
@@ -106,16 +76,16 @@ class EnhancePage : Page{
                         newStoneStack.amount -= 1
                         stoneSlot.itemStack = newStoneStack
                     }
-                    imageFail.w = STATUS_W
-                    imageFail.h = STATUS_H
+                    imageFail.w = 24
+                    imageFail.h = 24
                 }
                 WuxieAPI.updateGui(pl)
             } catch (e: Exception) {
                 warning(e, e.stackTrace.first())
             }
         }
-        buttonOutput.w = BTN_W
-        buttonOutput.h = BTN_H
+        buttonOutput.w = 25
+        buttonOutput.h = 25
         buttonOutput.tooltips = listOf("§f强化")
         guiContainer.add(buttonOutput)
         guiContainer.add(imageSuccess)
@@ -126,6 +96,8 @@ class EnhancePage : Page{
         guiContainer.add(stoneLevelText)
         stoneProbText.scale = 0.0
         guiContainer.add(stoneProbText)
+        titleText.scale = 1.2
+        guiContainer.add(titleText)
         return enhanceGui
     }
 
