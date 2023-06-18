@@ -1,13 +1,17 @@
 package moe.gensoukyo.gui.pages
 
+import me.wuxie.wakeshow.wakeshow.api.WuxieAPI
 import me.wuxie.wakeshow.wakeshow.ui.WInventoryScreen
 import me.wuxie.wakeshow.wakeshow.ui.WxScreen
 import me.wuxie.wakeshow.wakeshow.ui.component.WButton
 import me.wuxie.wakeshow.wakeshow.ui.component.WSlot
 import me.wuxie.wakeshow.wakeshow.ui.component.WTextList
 import moe.gensoukyo.gui.config.MainConfig.conf
+import moe.gensoukyo.gui.util.ProficiencyOperations
 import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
+import taboolib.common.platform.function.warning
+import taboolib.platform.util.isAir
 
 class ProficiencyPage : Page {
     private val VERSION = conf["imageVersion"] as String
@@ -67,10 +71,43 @@ class ProficiencyPage : Page {
         transferButton.w = 50
         transferButton.h = 25
         transferButton.tooltips = listOf("§f转移")
+        transferButton.setFunction { _, pl ->
+            try {
+                val (newWeaponFrom, newWeaponTo) =
+                    ProficiencyOperations.transfer(pl, transferWeaponFrom.itemStack, transferWeaponTo.itemStack)
+                if (newWeaponFrom != null && newWeaponTo != null) {
+                    transferWeaponFrom.itemStack = newWeaponFrom
+                    transferWeaponTo.itemStack = newWeaponTo
+                    ProficiencyPageTools.refreshWeaponTransfer(transferWeaponFrom.itemStack, weaponFromText)
+                    ProficiencyPageTools.refreshWeaponTransfer(transferWeaponTo.itemStack, weaponToText)
+                    WuxieAPI.updateGui(pl)
+                }
+            } catch (e: Exception) {
+                warning(e, e.stackTrace.first())
+            }
+        }
         guiContainer.add(transferButton)
         extractButton.w = 24
         extractButton.h = 24
         extractButton.tooltips = listOf("§f提取")
+        extractButton.setFunction { _, pl ->
+            try {
+                if (extractStone.itemStack != null && !extractStone.itemStack.isAir) {
+                    pl.sendMessage("§c请先取出精炼原石")
+                } else {
+                    val (newWeapon, stone) =
+                        ProficiencyOperations.extract(pl, extractWeapon.itemStack)
+                    if (stone != null) {
+                        extractStone.itemStack = stone
+                        extractWeapon.itemStack = newWeapon
+                        ProficiencyPageTools.refreshWeaponExtract(newWeapon, weaponExtractText)
+                        WuxieAPI.updateGui(pl)
+                    }
+                }
+            } catch (e: Exception) {
+                warning(e, e.stackTrace.first())
+            }
+        }
         guiContainer.add(extractButton)
         titleText.scale = 1.2
         guiContainer.add(titleText)

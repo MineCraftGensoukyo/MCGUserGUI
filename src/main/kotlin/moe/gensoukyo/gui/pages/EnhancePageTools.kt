@@ -1,9 +1,13 @@
 package moe.gensoukyo.gui.pages
 
+import me.wuxie.wakeshow.wakeshow.ui.WxScreen
+import me.wuxie.wakeshow.wakeshow.ui.component.WSlot
 import me.wuxie.wakeshow.wakeshow.ui.component.WTextList
 import moe.gensoukyo.gui.util.LoreInfoTools.getEquipmentInfo
 import moe.gensoukyo.gui.util.LoreInfoTools.getStoneInfo
+import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
+import taboolib.platform.util.giveItem
 import taboolib.platform.util.isAir
 
 object EnhancePageTools {
@@ -44,6 +48,17 @@ object EnhancePageTools {
         stoneLevelText.content =
             listOf("§1§l等级: ${stoneInfo["limitLevelLow"]!!}-${stoneInfo["limitLevelHigh"]!!}")
         stoneProbText.content = listOf("§b§l${stoneInfo["successProb"]!!}%")
+    }
+
+    fun giveBackItems(pl: Player, gui: WxScreen) {
+        val equip =
+            (gui.container.getComponent("equipment") as WSlot).itemStack
+        val stoneIn =
+            (gui.container.getComponent("stone") as WSlot).itemStack
+        if (equip != null) pl.giveItem(equip)
+        if (stoneIn != null) pl.giveItem(stoneIn)
+        equip?.amount = 0
+        stoneIn?.amount = 0
     }
 
 }

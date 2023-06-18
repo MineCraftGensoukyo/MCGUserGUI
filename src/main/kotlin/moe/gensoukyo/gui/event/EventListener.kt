@@ -4,16 +4,19 @@ import me.wuxie.wakeshow.wakeshow.api.WuxieAPI
 import me.wuxie.wakeshow.wakeshow.api.event.PlayerCloseScreenEvent
 import me.wuxie.wakeshow.wakeshow.api.event.PlayerOpenScreenEvent
 import me.wuxie.wakeshow.wakeshow.api.event.PlayerPostClickComponentEvent
+import me.wuxie.wakeshow.wakeshow.ui.WxScreen
 import me.wuxie.wakeshow.wakeshow.ui.component.WSlot
 import me.wuxie.wakeshow.wakeshow.ui.component.WTextList
 import moe.gensoukyo.gui.pages.EnhancePageTools
 import moe.gensoukyo.gui.pages.ProficiencyPageTools
 import moe.gensoukyo.gui.util.ClearCache
+import moe.gensoukyo.lib.maps.DataToken
+import moe.gensoukyo.lib.server.npcApi
 import org.bukkit.event.player.PlayerLoginEvent
+import org.bukkit.event.player.PlayerQuitEvent
 import taboolib.common.platform.event.EventPriority
 import taboolib.common.platform.event.SubscribeEvent
 import taboolib.common.platform.function.info
-import taboolib.platform.util.giveItem
 
 object EventListener {
 
@@ -21,32 +24,10 @@ object EventListener {
     fun playerCloseScreenEventListener(e: PlayerCloseScreenEvent) {
         info("${e.player.name}关闭${e.screen.id} - ${e.screen}")
         if (e.screen.id == "强化UI") {
-            val equip =
-                (e.screen.container.getComponent("equipment") as WSlot).itemStack
-            val stoneIn =
-                (e.screen.container.getComponent("stone") as WSlot).itemStack
-            if (equip != null) e.player.giveItem(equip)
-            if (stoneIn != null) e.player.giveItem(stoneIn)
-            equip?.amount = 0
-            stoneIn?.amount = 0
+            EnhancePageTools.giveBackItems(e.player, e.screen)
         }
         if (e.screen.id == "熟练度UI") {
-            val weaponFrom =
-                (e.screen.container.getComponent("weapon_from") as WSlot).itemStack
-            val weaponTo =
-                (e.screen.container.getComponent("weapon_to") as WSlot).itemStack
-            val weaponExtract =
-                (e.screen.container.getComponent("weapon_extract") as WSlot).itemStack
-            val stoneExtract =
-                (e.screen.container.getComponent("stone_extract") as WSlot).itemStack
-            if (weaponFrom != null) e.player.giveItem(weaponFrom)
-            if (weaponTo != null) e.player.giveItem(weaponTo)
-            if (weaponExtract != null) e.player.giveItem(weaponExtract)
-            if (stoneExtract != null) e.player.giveItem(stoneExtract)
-            weaponFrom?.amount = 0
-            weaponTo?.amount = 0
-            weaponExtract?.amount = 0
-            stoneExtract?.amount = 0
+            ProficiencyPageTools.giveBackItems(e.player, e.screen)
         }
     }
 
@@ -124,5 +105,22 @@ object EventListener {
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     fun onPlayerLogin(e: PlayerLoginEvent) {
         ClearCache.run(e.player)
+    }
+
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
+    fun onPlayerQuit(e: PlayerQuitEvent) {
+        val iPlayer = e.player.npcApi
+        var guiData =
+            DataToken("${iPlayer.name}_强化UI_Gui", WxScreen::class.java) { null }
+        if (guiData[iPlayer.tempdata] != null) {
+            val gui = guiData[iPlayer.tempdata] as WxScreen
+            EnhancePageTools.giveBackItems(e.player, gui)
+        }
+        guiData =
+            DataToken("${iPlayer.name}_熟练度UI_Gui", WxScreen::class.java) { null }
+        if (guiData[iPlayer.tempdata] != null) {
+            val gui = guiData[iPlayer.tempdata] as WxScreen
+            ProficiencyPageTools.giveBackItems(e.player, gui)
+        }
     }
 }

@@ -96,9 +96,9 @@ object EquipmentEnhance {
             ENHANCE_PROPERTY_LIST.forEach {
                 if (line.contains(it)) {
                     val spl = line.split("+")
-                    val value = spl[1].substring(3, spl[1].length - 1).toDouble()
+                    val value = spl[1].substring(3).trim().toInt()
                     val newValue = value + quality
-                    newEquipLore.add("${spl[0]}+ §f${"%.2f".format(newValue)}")
+                    newEquipLore.add("${spl[0]}+ §f${newValue}")
                     isEnhanceProperty = true
                 }
             }

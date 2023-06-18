@@ -1,5 +1,6 @@
 package moe.gensoukyo.gui
 
+import moe.gensoukyo.gui.config.MainConfig.reload
 import moe.gensoukyo.gui.pages.EnhancePage
 import moe.gensoukyo.gui.pages.ProficiencyPage
 import moe.gensoukyo.gui.pages.TestPage
@@ -52,6 +53,7 @@ object MCGUserGUI : Plugin() {
                 execute<ProxyCommandSender> { sender, _, _ ->
                     try {
                         configs.conf.reload()
+                        configs.items.reload()
                         if (configs.conf["clearCache"] as Boolean) {
                             onlinePlayers().forEach { player ->
                                 ClearCache.run(player.cast())
