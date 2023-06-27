@@ -18,8 +18,9 @@ taboolib {
     description {
         desc("本插件用与为MC幻想乡RPG内容提供图形用户界面的支持")
         contributors {
-            name("ZakeArias")
             name("DavidWang19")
+            name("ZakeArias")
+            name("satorishi")
         }
         dependencies {
             name("WakeShow").with("bukkit")

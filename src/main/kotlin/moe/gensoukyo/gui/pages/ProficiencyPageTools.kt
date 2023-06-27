@@ -9,7 +9,7 @@ import org.bukkit.inventory.ItemStack
 import taboolib.platform.util.giveItem
 import taboolib.platform.util.isAir
 
-object ProficiencyPageTools {
+object ProficiencyPageTools : PageTools{
     fun refreshWeaponTransfer(weapon: ItemStack?, weaponText: WTextList) {
         if (weapon == null || weapon.isAir) {
             weaponText.scale = 0.0
@@ -50,7 +50,7 @@ object ProficiencyPageTools {
         return
     }
 
-    fun giveBackItems(pl: Player, gui: WxScreen) {
+    override fun giveBackItems(pl: Player, gui: WxScreen) {
         val weaponFrom =
             (gui.container.getComponent("weapon_from") as WSlot).itemStack
         val weaponTo =

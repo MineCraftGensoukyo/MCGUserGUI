@@ -5,11 +5,14 @@ import me.wuxie.wakeshow.wakeshow.api.event.PlayerCloseScreenEvent
 import me.wuxie.wakeshow.wakeshow.api.event.PlayerOpenScreenEvent
 import me.wuxie.wakeshow.wakeshow.api.event.PlayerPostClickComponentEvent
 import me.wuxie.wakeshow.wakeshow.ui.WxScreen
+import me.wuxie.wakeshow.wakeshow.ui.component.WButton
 import me.wuxie.wakeshow.wakeshow.ui.component.WSlot
 import me.wuxie.wakeshow.wakeshow.ui.component.WTextList
 import moe.gensoukyo.gui.pages.EnhancePageTools
+import moe.gensoukyo.gui.pages.Pages.pages
 import moe.gensoukyo.gui.pages.ProficiencyPageTools
 import moe.gensoukyo.gui.util.ClearCache
+import moe.gensoukyo.gui.util.EmbeddingTools
 import moe.gensoukyo.lib.maps.DataToken
 import moe.gensoukyo.lib.server.npcApi
 import org.bukkit.event.player.PlayerLoginEvent
@@ -23,11 +26,12 @@ object EventListener {
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     fun playerCloseScreenEventListener(e: PlayerCloseScreenEvent) {
         info("${e.player.name}关闭${e.screen.id} - ${e.screen}")
-        if (e.screen.id == "强化UI") {
-            EnhancePageTools.giveBackItems(e.player, e.screen)
-        }
-        if (e.screen.id == "熟练度UI") {
-            ProficiencyPageTools.giveBackItems(e.player, e.screen)
+        pages.forEach {
+            if (e.screen.id == it.key) {
+                if (it.value != null) {
+                    it.value!!.giveBackItems(e.player, e.screen)
+                }
+            }
         }
     }
 
@@ -82,6 +86,29 @@ object EventListener {
                 return
             }
         }
+        if (e.screen.id == "镶嵌UI") {
+            if (e.component.id == "equipment_slot"){
+                val equip = (e.component as WSlot).itemStack
+                val button = e.screen.container.getComponent("embedding_button") as WButton
+                val textList = e.screen.container.getComponent("equipment_tips") as WTextList
+                EmbeddingTools.equipmentSlotCheck(e.player,equip,button,textList)
+                return
+            }
+            if (e.component.id == "stone_slot"){
+                val stone = (e.component as WSlot).itemStack
+                val button = e.screen.container.getComponent("embedding_button") as WButton
+                val textList = e.screen.container.getComponent("stone_tips") as WTextList
+                EmbeddingTools.stoneSlotCheck(e.player,stone,button,textList)
+                return
+            }
+        }
+        if (e.screen.id == "摘除镶嵌UI") {
+            if(e.component.id == "equipment_slot"){
+                val equip = (e.component as WSlot).itemStack;
+                EmbeddingTools.unEmbeddingCheck(equip,e.screen.container,e.player);
+                return
+            }
+        }
     }
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
@@ -110,17 +137,15 @@ object EventListener {
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     fun onPlayerQuit(e: PlayerQuitEvent) {
         val iPlayer = e.player.npcApi
-        var guiData =
-            DataToken("${iPlayer.name}_强化UI_Gui", WxScreen::class.java) { null }
-        if (guiData[iPlayer.tempdata] != null) {
-            val gui = guiData[iPlayer.tempdata] as WxScreen
-            EnhancePageTools.giveBackItems(e.player, gui)
-        }
-        guiData =
-            DataToken("${iPlayer.name}_熟练度UI_Gui", WxScreen::class.java) { null }
-        if (guiData[iPlayer.tempdata] != null) {
-            val gui = guiData[iPlayer.tempdata] as WxScreen
-            ProficiencyPageTools.giveBackItems(e.player, gui)
+        pages.forEach {
+            if (it.value != null) {
+                val guiData =
+                    DataToken("${iPlayer.name}_${it}_Gui", WxScreen::class.java) { null }
+                if (guiData[iPlayer.tempdata] != null) {
+                    val gui = guiData[iPlayer.tempdata] as WxScreen
+                    it.value!!.giveBackItems(e.player, gui)
+                }
+            }
         }
     }
 }

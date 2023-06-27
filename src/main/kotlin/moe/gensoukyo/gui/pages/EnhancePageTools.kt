@@ -10,7 +10,7 @@ import org.bukkit.inventory.ItemStack
 import taboolib.platform.util.giveItem
 import taboolib.platform.util.isAir
 
-object EnhancePageTools {
+object EnhancePageTools : PageTools{
     fun refreshEquip(equip: ItemStack?, equipText: WTextList) {
         if (equip == null || equip.isAir) {
             equipText.scale = 0.0
@@ -50,7 +50,7 @@ object EnhancePageTools {
         stoneProbText.content = listOf("§b§l${stoneInfo["successProb"]!!}%")
     }
 
-    fun giveBackItems(pl: Player, gui: WxScreen) {
+    override fun giveBackItems(pl: Player, gui: WxScreen) {
         val equip =
             (gui.container.getComponent("equipment") as WSlot).itemStack
         val stoneIn =

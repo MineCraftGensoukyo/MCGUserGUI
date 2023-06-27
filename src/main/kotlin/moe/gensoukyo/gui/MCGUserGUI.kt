@@ -1,10 +1,7 @@
 package moe.gensoukyo.gui
 
 import moe.gensoukyo.gui.config.MainConfig.reload
-import moe.gensoukyo.gui.pages.DecomposePage
-import moe.gensoukyo.gui.pages.EnhancePage
-import moe.gensoukyo.gui.pages.ProficiencyPage
-import moe.gensoukyo.gui.pages.TestPage
+import moe.gensoukyo.gui.pages.*
 import moe.gensoukyo.gui.util.ClearCache
 import org.bukkit.entity.Player
 import taboolib.common.platform.Plugin
@@ -22,7 +19,11 @@ object MCGUserGUI : Plugin() {
         "version" to " -- 查看插件版本\n",
         "reload" to " -- 重载配置\n",
         "test" to " -- 打开测试GUI\n",
-        "enhance [player]" to " -- 打开强化GUI\n"
+        "enhance [player]" to " -- 打开强化GUI\n",
+        "proficiency [player]" to " -- 打开熟练度GUI\n",
+        "decompose [player]" to " -- 打开分解GUI\n",
+        "embedding [player]" to " -- 打开镶嵌GUI\n",
+        "unembedding [player]" to " -- 打开摘除镶嵌GUI\n"
     )
 
     override fun onLoad() {
@@ -118,6 +119,36 @@ object MCGUserGUI : Plugin() {
                     }
                 }
             }
+            literal("embedding", optional = true) {
+                execute<Player> { sender, _, _ ->
+                    val embeddingPage = EmbeddingPage()
+                    embeddingPage.showCachePage(sender)
+                }
+                dynamic {
+                    suggestion<ProxyCommandSender> { _, _ ->
+                        onlinePlayers().map { it.name }
+                    }
+                    execute<ProxyCommandSender> { _, _, argument ->
+                        val embeddingPage = EmbeddingPage()
+                        embeddingPage.showCachePage(getProxyPlayer(argument)!!.cast())
+                    }
+                }
+            }
+            literal("unembedding", optional = true) {
+                execute<Player> { sender, _, _ ->
+                    val unembeddingPage = UnEmbeddingPage()
+                    unembeddingPage.showCachePage(sender)
+                }
+                dynamic {
+                    suggestion<ProxyCommandSender> { _, _ ->
+                        onlinePlayers().map { it.name }
+                    }
+                    execute<ProxyCommandSender> { _, _, argument ->
+                        val unembeddingPage = UnEmbeddingPage()
+                        unembeddingPage.showCachePage(getProxyPlayer(argument)!!.cast())
+                    }
+                }
+            }
             execute<ProxyCommandSender> { sender, _, _ ->
                 val json = TJ()
                 json.append("§6输入")
@@ -140,7 +171,7 @@ object MCGUserGUI : Plugin() {
                 | |  | | |___| |__| | |__| \__ \  __/ |  | |__| | |__| |_| |_ 
                 |_|  |_|\_____\_____|\____/|___/\___|_|   \_____|\____/|_____|
                                 $pluginId
-                                Author  - DavidWang19, ZakeArias
+                                Author  - DavidWang19, ZakeArias, satorishi
                                 Version - $pluginVersion
              ====================================================================
         """.trimIndent()
