@@ -1,6 +1,7 @@
 package moe.gensoukyo.gui
 
 import moe.gensoukyo.gui.config.MainConfig.reload
+import moe.gensoukyo.gui.pages.DecomposePage
 import moe.gensoukyo.gui.pages.EnhancePage
 import moe.gensoukyo.gui.pages.ProficiencyPage
 import moe.gensoukyo.gui.pages.TestPage
@@ -99,6 +100,21 @@ object MCGUserGUI : Plugin() {
                     execute<ProxyCommandSender> { _, _, argument ->
                         val enhancePage = ProficiencyPage()
                         enhancePage.showCachePage(getProxyPlayer(argument)!!.cast())
+                    }
+                }
+            }
+            literal("decompose", optional = true) {
+                execute<Player> { sender, _, _ ->
+                    val decomposePage = DecomposePage()
+                    decomposePage.showCachePage(sender)
+                }
+                dynamic {
+                    suggestion<ProxyCommandSender> { _, _ ->
+                        onlinePlayers().map { it.name }
+                    }
+                    execute<ProxyCommandSender> { _, _, argument ->
+                        val decomposePage = DecomposePage()
+                        decomposePage.showCachePage(getProxyPlayer(argument)!!.cast())
                     }
                 }
             }
