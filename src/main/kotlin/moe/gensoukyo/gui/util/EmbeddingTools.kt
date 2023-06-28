@@ -6,9 +6,11 @@ import me.wuxie.wakeshow.wakeshow.ui.component.WButton
 import me.wuxie.wakeshow.wakeshow.ui.component.WCheckBox
 import me.wuxie.wakeshow.wakeshow.ui.component.WScrollingContainer
 import me.wuxie.wakeshow.wakeshow.ui.component.WTextList
+import moe.gensoukyo.gui.config.MainConfig.armor_types
 import moe.gensoukyo.gui.config.MainConfig.conf
+import moe.gensoukyo.gui.config.MainConfig.items
+import moe.gensoukyo.gui.config.MainConfig.weapon_types
 import org.bukkit.ChatColor
-import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import java.util.*
@@ -18,15 +20,6 @@ import java.util.regex.Pattern
 import java.util.stream.Collectors
 
 class EmbeddingTools {
-    init {
-        val SWORD_SET: MutableSet<String> = HashSet()
-        SWORD_SET.add("剑")
-        SWORD_SET.add("太刀")
-        TYPES[WEAPON] = SWORD_SET
-        val ARMOR_SET: Set<String> = HashSet()
-        TYPES[ARMOR] = ARMOR_SET
-    }
-
     companion object {
         private val VERSION = conf["imageVersion"] as String
         private val CHECK_1 = String.format(
@@ -51,7 +44,7 @@ class EmbeddingTools {
         private const val WILD_CARD = "通用"
         private const val WEAPON = "武器"
         private const val ARMOR = "防具"
-        private val TYPES = HashMap<String, Set<String>>()
+        private val TYPES = hashMapOf(WEAPON to weapon_types, ARMOR to armor_types)
 
         //以下为装备内的lore
         private const val EMPTY_SLOT = "§8○ 空部件"
@@ -110,18 +103,15 @@ class EmbeddingTools {
         }
 
         fun createPrimordialStone(level: Int, amount: Int): ItemStack {
-            val itemStack = ItemStack(Material.getMaterial("MCGPROJECT_MCG_PROP")!!, amount)
-            itemStack.durability = 69.toShort()
-            val name = "§a§l精炼原石 · 品阶%d"
-            val meta = itemStack.itemMeta!!.clone()
-            meta.setDisplayName(String.format(name, level))
-            meta.lore = listOf(
-                "§f[素材]",
-                "§7沉淀久远气息的结晶",
-                "§7经过加工后，可以刻入魔法"
-            )
-            itemStack.setItemMeta(meta)
-            return itemStack
+            val stone = items.getItemStack("精炼原石")!!
+            stone.amount = amount
+            var itemName = stone.itemMeta!!.displayName
+            itemName += "${level}"
+            val itemMeta = stone.itemMeta!!.clone()
+            itemMeta.setDisplayName(itemName)
+            stone.itemMeta = itemMeta
+
+            return stone
         }
 
         fun stoneSlotCheck(player: Player, stone: ItemStack?, button: WButton, stoneTipsText: WTextList) {

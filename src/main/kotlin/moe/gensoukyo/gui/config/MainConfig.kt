@@ -15,9 +15,18 @@ object MainConfig {
 
     lateinit var items: YamlConfiguration
 
+    lateinit var weapon_types: HashSet<String>
+    lateinit var armor_types: HashSet<String>
+
     @Awake(LifeCycle.ENABLE)
     fun loadItems() {
         items = YamlConfiguration.loadConfiguration(File(conf["itemsPath"] as String))
+    }
+
+    @Awake(LifeCycle.ENABLE)
+    fun loadEquipmentTypes() {
+        weapon_types = conf.getStringList("equipType.weapon").toHashSet()
+        armor_types = conf.getStringList("equipType.armor").toHashSet()
     }
 
     fun YamlConfiguration.reload() = loadItems()

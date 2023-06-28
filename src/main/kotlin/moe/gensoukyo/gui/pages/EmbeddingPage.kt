@@ -46,10 +46,10 @@ class EmbeddingPage : Page {
     private val titleList: MutableList<String> = ArrayList()
 
     init {
-        titleList.add("§e§l镶嵌")
+        titleList.add("§1§l镶  嵌")
     }
 
-    private val titleText = WTextList(guiContainer, "title_text", titleList, 90, 10, 600, 20)
+    private val titleText = WTextList(guiContainer, "title_text", titleList, 80, 4, 40, 20)
     private val equipmentTipsText = WTextList(
         guiContainer, "equipment_tips", ArrayList(),
         150, 30, 60, 20
@@ -65,8 +65,8 @@ class EmbeddingPage : Page {
         equipmentSlot.isCanDrag = true
         stoneSlot.isCanDrag = true
         button.tooltips = listOf("确认镶嵌")
-        button.w = 25
-        button.h = 25
+        button.w = 0
+        button.h = 0
         button.function = ClickFunction { t: Int, pl: Player? ->
             val tips = EmbeddingTools.embeddingApprovalCheck(equipmentSlot.itemStack, stoneSlot.itemStack)
             if (tips.isEmpty()) {
