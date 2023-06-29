@@ -92,7 +92,7 @@ object EmbeddingTools {
     }
 
     fun createPrimordialStone(level: Int, amount: Int): ItemStack {
-        val stone = items.getItemStack("精炼原石")!!
+        val stone = items.getItemStack("精炼原石")!!.clone()
         stone.amount = amount
         var itemName = stone.itemMeta!!.displayName
         itemName += "${level}"
@@ -135,10 +135,10 @@ object EmbeddingTools {
 
     fun embeddingApprovalCheck(equipment: ItemStack?, stone: ItemStack?): String {
         if (equipment == null || equipment.itemMeta?.lore == null) {
-            return "§c该物品无法被镶嵌"
+            return "§c无法镶嵌"
         }
         if (stone == null || stone.itemMeta?.lore == null) {
-            return "§c该镶嵌石不可镶嵌于该装备上"
+            return "§c无法镶嵌"
         }
         val stoneLore = stone.itemMeta!!.lore!!
         val embedded = HashSet<String>()
@@ -176,13 +176,13 @@ object EmbeddingTools {
             }
         }
         if (itemType.isEmpty() || itemLevel == -1) {
-            return "§c该物品无法被镶嵌"
+            return "§c无法镶嵌"
         }
         if (!typeCheck(itemType, stoneLore) || stoneLevel == -1) {
-            return "§c该镶嵌石不可镶嵌于该装备上"
+            return "§c部位不符"
         }
         if (itemLevel > stoneLevel) {
-            return "§c镶嵌石品阶与装备不符"
+            return "§c品阶不符"
         }
         val stoneName = getPureString(
             getStringWithouHead(
@@ -190,13 +190,13 @@ object EmbeddingTools {
             )
         )
         return if (embedded.contains(stoneName)) {
-            "§c不可在装备上镶嵌同种镶嵌石"
+            "§c效果重复"
         } else ""
     }
 
     private fun embeddingStoneCheck(stone: ItemStack): String {
         if (stone.itemMeta?.lore == null) {
-            return "§c请放上镶嵌石"
+            return "§c非镶嵌石"
         }
         val stoneLore = stone.itemMeta!!.lore
         var isStone = false
@@ -207,13 +207,13 @@ object EmbeddingTools {
             }
         }
         return if (!isStone) {
-            "§c请放上镶嵌石"
+            "§c非镶嵌石"
         } else ""
     }
 
     private fun embeddingEquipmentCheck(equipment: ItemStack): String {
         if (equipment.itemMeta?.lore == null) {
-            return "§c请放上装备"
+            return "§c无法镶嵌"
         }
         var canEmbedding = false
         val itemLore = equipment.itemMeta!!.lore
@@ -224,7 +224,7 @@ object EmbeddingTools {
             }
         }
         return if (!canEmbedding) {
-            "§c该装备没有空余的镶嵌槽"
+            "§c无空槽位"
         } else ""
     }
 
@@ -345,7 +345,7 @@ object EmbeddingTools {
         scrollContainer.componentMap.keys.forEach(Consumer { stone: String? -> scrollContainer.remove(stone) })
         decide_button.isCanPress = false
         tipsText.content = ArrayList()
-        try {
+        if (equipment!=null) {
             val itemLore = equipment!!.itemMeta!!.lore
             var num = 0
             for (lore in itemLore!!) {
@@ -360,11 +360,8 @@ object EmbeddingTools {
             } else {
                 decide_button.isCanPress = true
             }
-        } catch (e: Exception) {
-            tipsText.content = listOf("§c非法输入")
-        } finally {
-            WuxieAPI.updateGui(player)
         }
+        WuxieAPI.updateGui(player)
     }
 
     fun inventoryPlentyFor(

@@ -43,28 +43,25 @@ class EmbeddingPage : Page {
         guiContainer, "image_success",
         SUCCESS_URL, 152, 38, 0, 0
     )
-    private val titleList: MutableList<String> = ArrayList()
 
-    init {
-        titleList.add("§1§l镶  嵌")
-    }
-
-    private val titleText = WTextList(guiContainer, "title_text", titleList, 80, 4, 40, 20)
+    private val titleText = WTextList(guiContainer, "title_text", listOf("§1§l镶  嵌"), 80, 4, 40, 20)
     private val equipmentTipsText = WTextList(
         guiContainer, "equipment_tips", ArrayList(),
-        150, 30, 60, 20
+        149, 30, 60, 20
     )
     private val stoneTipsText = WTextList(
         guiContainer, "stone_tips", ArrayList(),
-        9, 20, 60, 20
+        8, 20, 60, 20
     )
     private val stoneSlot = WSlot(guiContainer, "stone_slot", ItemStack(Material.AIR), 51, 41)
     private val equipmentSlot = WSlot(guiContainer, "equipment_slot", ItemStack(Material.AIR), 101, 41)
 
-    init {
+    override fun getPage(): WxScreen {
         equipmentSlot.isCanDrag = true
         stoneSlot.isCanDrag = true
-        button.tooltips = listOf("确认镶嵌")
+        equipmentSlot.emptyTooltips = listOf("§f请放入装备")
+        stoneSlot.emptyTooltips = listOf("§f请放入强化石")
+        button.tooltips = listOf("§f确认镶嵌")
         button.w = 0
         button.h = 0
         button.function = ClickFunction { t: Int, pl: Player? ->
@@ -89,9 +86,7 @@ class EmbeddingPage : Page {
         guiContainer.add(equipmentTipsText)
         guiContainer.add(equipmentSlot)
         guiContainer.add(stoneSlot)
-    }
 
-    override fun getPage(): WxScreen {
         return gui
     }
 }

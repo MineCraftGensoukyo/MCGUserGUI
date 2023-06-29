@@ -31,17 +31,11 @@ class UnEmbeddingPage : Page {
         GUI_POS.dx, GUI_POS.dy, GUI_POS.w, GUI_POS.h, 15, GUI_POS.h - 80
     )
     private val guiContainer = gui.container
-    private val titleList: MutableList<String> = ArrayList()
-
-    init {
-        titleList.add("§9§l摘除镶嵌")
-    }
-
     private val scroll = WScrollingContainer(
         guiContainer, "choose_scroll",
         147, 4, 39, 68, 200
     )
-    private val titleText = WTextList(guiContainer, "title_list", titleList, 78, 5, 60, 20)
+    private val titleText = WTextList(guiContainer, "title_list", listOf("§9§l摘除镶嵌"), 78, 5, 60, 20)
     private val tipsText = WTextList(guiContainer, "tips_list", ArrayList(), 35, 62, 60, 20)
     private val equipmentSlot = WSlot(guiContainer, "equipment_slot", ItemStack(Material.AIR), 88, 42)
     private val decide_button = WButton(
@@ -49,15 +43,16 @@ class UnEmbeddingPage : Page {
         BTN_1, BTN_2, BTN_3,
         25, 35
     )
-    private val scrollContainer = scroll.container
 
-    init {
+    override fun getPage(): WxScreen {
         tipsText.scale = 0.9
+        equipmentSlot.emptyTooltips = listOf("§f请放入装备")
         decide_button.w = 45
         decide_button.h = 13
         decide_button.isCanPress = false
-        decide_button.tooltips = listOf("摘除镶嵌")
+        decide_button.tooltips = listOf("§f摘除镶嵌")
         decide_button.function = ClickFunction { t: Int, pl: Player ->
+            val scrollContainer = scroll.container
             val item = equipmentSlot.itemStack
             val itemLore = item.itemMeta!!.lore!!
             val unembeddingList: MutableList<String> = ArrayList()
@@ -99,9 +94,7 @@ class UnEmbeddingPage : Page {
         guiContainer.add(tipsText)
         guiContainer.add(scroll)
         guiContainer.add(equipmentSlot)
-    }
 
-    override fun getPage(): WxScreen {
         return gui
     }
 }
