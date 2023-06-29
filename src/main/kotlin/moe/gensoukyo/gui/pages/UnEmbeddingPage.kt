@@ -73,7 +73,6 @@ class UnEmbeddingPage : Page {
                     newEquipment.setItemMeta(newMeta)
                     equipmentSlot.itemStack = newEquipment
                     primordialStoneList.forEach(Consumer { itemStacks: ItemStack? -> pl.inventory.addItem(itemStacks) })
-                    tipsText.content = listOf("§a摘除成功")
                     decide_button.isCanPress = false
                     scrollContainer.componentMap.keys.forEach(Consumer { component: String? ->
                         scrollContainer.remove(
@@ -82,6 +81,7 @@ class UnEmbeddingPage : Page {
                     })
 
                     EmbeddingTools.unEmbeddingCheck(newEquipment,guiContainer,pl)
+                    tipsText.content = listOf("§a摘除成功")
                 } else {
                     tipsText.content = listOf("§c背包不足")
                 }
