@@ -103,7 +103,7 @@ object ProficiencyOperations {
             return Pair(null, null)
         }
         val quality = equipInfo["quality"]!!
-        val stone = items.getItemStack("精炼原石")!!
+        val stone = items.getItemStack("精炼原石")!!.clone()
         var itemName = stone.itemMeta!!.displayName
         itemName += "${quality}"
         val itemMeta = stone.itemMeta!!.clone()
