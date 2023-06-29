@@ -90,6 +90,11 @@ object EventListener {
         }
         if (e.screen.id == "镶嵌UI") {
             if (e.component.id == "equipment_slot"){
+                e.screen.container.getComponent("image_success").w = 0
+                e.screen.container.getComponent("image_success").h = 0
+                e.screen.container.getComponent("image_fail").w = 0
+                e.screen.container.getComponent("image_fail").h = 0
+
                 val equip = (e.component as WSlot).itemStack
                 val button = e.screen.container.getComponent("embedding_button") as WButton
                 val textList = e.screen.container.getComponent("equipment_tips") as WTextList
@@ -97,6 +102,11 @@ object EventListener {
                 return
             }
             if (e.component.id == "stone_slot"){
+                e.screen.container.getComponent("image_success").w = 0
+                e.screen.container.getComponent("image_success").h = 0
+                e.screen.container.getComponent("image_fail").w = 0
+                e.screen.container.getComponent("image_fail").h = 0
+
                 val stone = (e.component as WSlot).itemStack
                 val button = e.screen.container.getComponent("embedding_button") as WButton
                 val textList = e.screen.container.getComponent("stone_tips") as WTextList
@@ -130,6 +140,10 @@ object EventListener {
             (e.screen.container.getComponent("weapon_extract_text") as WTextList).scale = 0.0
         }
         if (e.screen.id == "镶嵌UI") {
+            e.screen.container.getComponent("image_success").w = 0
+            e.screen.container.getComponent("image_success").h = 0
+            e.screen.container.getComponent("image_fail").w = 0
+            e.screen.container.getComponent("image_fail").h = 0
             (e.screen.container.getComponent("equipment_tips") as WTextList).content = listOf()
             (e.screen.container.getComponent("stone_tips") as WTextList).content = listOf()
             e.screen.container.getComponent("embedding_button").w = 0

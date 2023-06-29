@@ -17,16 +17,12 @@ import org.bukkit.inventory.ItemStack
 
 class EmbeddingPage : Page {
     private val VERSION = conf["imageVersion"] as String
-    private val GUI_BACKGROUND =
-        String.format("https://cdn.jsdelivr.net/gh/MineCraftGensoukyo/MCGImages@%s/img/Enhance_BG.png", VERSION)
-    private val BTN_1 =
-        String.format("https://cdn.jsdelivr.net/gh/MineCraftGensoukyo/MCGImages@%s/img/Enhance_BTN_1.png", VERSION)
-    private val BTN_2 =
-        String.format("https://cdn.jsdelivr.net/gh/MineCraftGensoukyo/MCGImages@%s/img/Enhance_BTN_2.png", VERSION)
-    private val BTN_3 =
-        String.format("https://cdn.jsdelivr.net/gh/MineCraftGensoukyo/MCGImages@%s/img/Enhance_BTN_3.png", VERSION)
-    private val SUCCESS_URL =
-        String.format("https://cdn.jsdelivr.net/gh/MineCraftGensoukyo/MCGImages@%s/img/Enhance_Success.png", VERSION)
+    private val GUI_BACKGROUND = "https://cdn.jsdelivr.net/gh/MineCraftGensoukyo/MCGImages@${VERSION}/img/Enhance_BG.png"
+    private val BTN_1 = "https://cdn.jsdelivr.net/gh/MineCraftGensoukyo/MCGImages@${VERSION}/img/Enhance_BTN_1.png"
+    private val BTN_2 = "https://cdn.jsdelivr.net/gh/MineCraftGensoukyo/MCGImages@${VERSION}/img/Enhance_BTN_2.png"
+    private val BTN_3 = "https://cdn.jsdelivr.net/gh/MineCraftGensoukyo/MCGImages@${VERSION}/img/Enhance_BTN_3.png"
+    private val SUCCESS_URL = "https://cdn.jsdelivr.net/gh/MineCraftGensoukyo/MCGImages@${VERSION}/img/Enhance_Success.png"
+    private val FAIL_URL = "https://cdn.jsdelivr.net/gh/MineCraftGensoukyo/MCGImages@${VERSION}/img/Enhance_Fail.png"
     private val guiTestPos = Pos(-1, -1, 190, 190, 0, 0)
     private val gui = WInventoryScreen(
         "镶嵌UI",
@@ -43,15 +39,17 @@ class EmbeddingPage : Page {
         guiContainer, "image_success",
         SUCCESS_URL, 152, 38, 0, 0
     )
-
+    private val imageFail = WImage(
+        guiContainer, "image_fail",
+        FAIL_URL, 152, 38, 0, 0)
     private val titleText = WTextList(guiContainer, "title_text", listOf("§1§l镶  嵌"), 80, 4, 40, 20)
     private val equipmentTipsText = WTextList(
-        guiContainer, "equipment_tips", ArrayList(),
+        guiContainer, "equipment_tips", listOf(),
         149, 30, 60, 20
     )
     private val stoneTipsText = WTextList(
-        guiContainer, "stone_tips", ArrayList(),
-        8, 20, 60, 20
+        guiContainer, "stone_tips", listOf(),
+        9, 20, 60, 20
     )
     private val stoneSlot = WSlot(guiContainer, "stone_slot", ItemStack(Material.AIR), 51, 41)
     private val equipmentSlot = WSlot(guiContainer, "equipment_slot", ItemStack(Material.AIR), 101, 41)
@@ -67,6 +65,11 @@ class EmbeddingPage : Page {
         button.w = 0
         button.h = 0
         button.function = ClickFunction { t: Int, pl: Player? ->
+            imageSuccess.w = 0
+            imageSuccess.h = 0
+            imageFail.w = 0
+            imageFail.h = 0
+
             val tips = EmbeddingTools.embeddingApprovalCheck(equipmentSlot.itemStack, stoneSlot.itemStack)
             if (tips.isEmpty()) {
                 val newEquipment = EmbeddingTools.embedding(equipmentSlot.itemStack, stoneSlot.itemStack)
@@ -78,9 +81,13 @@ class EmbeddingPage : Page {
                 if(!EmbeddingTools.embeddingEquipmentCheck(newEquipment).isEmpty()) button.w = 0
                 button.h = 0
 
+                imageSuccess.w = 24
+                imageSuccess.h = 24
                 equipmentTipsText.content = listOf("§a镶嵌成功")
 
             } else {
+                imageFail.w = 24
+                imageFail.h = 24
                 equipmentTipsText.content = listOf(tips)
             }
             WuxieAPI.updateGui(pl)
