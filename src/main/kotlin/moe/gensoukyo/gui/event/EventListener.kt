@@ -6,6 +6,7 @@ import me.wuxie.wakeshow.wakeshow.api.event.PlayerOpenScreenEvent
 import me.wuxie.wakeshow.wakeshow.api.event.PlayerPostClickComponentEvent
 import me.wuxie.wakeshow.wakeshow.ui.WxScreen
 import me.wuxie.wakeshow.wakeshow.ui.component.WButton
+import me.wuxie.wakeshow.wakeshow.ui.component.WScrollingContainer
 import me.wuxie.wakeshow.wakeshow.ui.component.WSlot
 import me.wuxie.wakeshow.wakeshow.ui.component.WTextList
 import moe.gensoukyo.gui.pages.EnhancePageTools
@@ -20,6 +21,7 @@ import org.bukkit.event.player.PlayerQuitEvent
 import taboolib.common.platform.event.EventPriority
 import taboolib.common.platform.event.SubscribeEvent
 import taboolib.common.platform.function.info
+import java.util.function.Consumer
 
 object EventListener {
 
@@ -126,6 +128,18 @@ object EventListener {
             (e.screen.container.getComponent("weapon_from_text") as WTextList).scale = 0.0
             (e.screen.container.getComponent("weapon_to_text") as WTextList).scale = 0.0
             (e.screen.container.getComponent("weapon_extract_text") as WTextList).scale = 0.0
+        }
+        if (e.screen.id == "镶嵌UI") {
+            (e.screen.container.getComponent("equipment_tips") as WTextList).content = listOf()
+            (e.screen.container.getComponent("stone_tips") as WTextList).content = listOf()
+            e.screen.container.getComponent("embedding_button").w = 0
+            e.screen.container.getComponent("embedding_button").h = 0
+        }
+        if (e.screen.id == "摘除镶嵌UI") {
+            (e.screen.container.getComponent("tips_list") as WTextList).content = listOf()
+            (e.screen.container.getComponent("decide_button") as WButton).isCanPress = false
+            val scrollContainer = (e.screen.container.getComponent("choose_scroll") as WScrollingContainer).container
+            scrollContainer.componentMap.keys.forEach(Consumer { stone: String? -> scrollContainer.remove(stone) })
         }
     }
 
