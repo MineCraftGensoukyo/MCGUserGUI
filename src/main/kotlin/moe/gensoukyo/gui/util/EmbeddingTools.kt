@@ -359,18 +359,23 @@ object EmbeddingTools {
         tipsText.content = ArrayList()
         if (equipment!=null) {
             val itemLore = equipment!!.itemMeta!!.lore
-            var num = 0
-            for (lore in itemLore!!) {
-                if (lore.contains(USED_SLOT)) {
-                    val stoneName = getStringWithouHead(lore, USED_SLOT).trim { it <= ' ' }
-                    scrollContainer.add(createStoneCheckBox(stoneName, num, scrollContainer))
-                    num++
+            if(itemLore!=null){
+                var num = 0
+                for (lore in itemLore!!) {
+                    if (lore.contains(USED_SLOT)) {
+                        val stoneName = getStringWithouHead(lore, USED_SLOT).trim { it <= ' ' }
+                        scrollContainer.add(createStoneCheckBox(stoneName, num, scrollContainer))
+                        num++
+                    }
+                }
+                if (num == 0) {
+                    tipsText.content = listOf("§c无镶嵌石")
+                } else {
+                    decide_button.isCanPress = true
                 }
             }
-            if (num == 0) {
-                tipsText.content = listOf("§c无镶嵌石")
-            } else {
-                decide_button.isCanPress = true
+            else{
+                tipsText.content = listOf("§c不是装备")
             }
         }
         WuxieAPI.updateGui(player)
