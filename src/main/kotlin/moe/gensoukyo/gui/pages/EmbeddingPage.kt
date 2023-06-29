@@ -98,6 +98,8 @@ class EmbeddingPage : Page {
         guiContainer.add(equipmentTipsText)
         guiContainer.add(equipmentSlot)
         guiContainer.add(stoneSlot)
+        guiContainer.add(imageSuccess)
+        guiContainer.add(imageFail)
 
         return gui
     }
