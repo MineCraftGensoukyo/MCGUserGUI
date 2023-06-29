@@ -89,6 +89,7 @@ class EmbeddingPage : Page {
                 imageFail.w = 24
                 imageFail.h = 24
                 equipmentTipsText.content = listOf(tips)
+                stoneTipsText.content = listOf(tips)
             }
             WuxieAPI.updateGui(pl)
         }

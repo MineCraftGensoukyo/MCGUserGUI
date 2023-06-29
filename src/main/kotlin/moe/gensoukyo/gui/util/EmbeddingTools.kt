@@ -103,10 +103,11 @@ object EmbeddingTools {
         return stone
     }
 
-    fun stoneSlotCheck(player: Player, stone: ItemStack?, button: WButton, stoneTipsText: WTextList) {
+    fun stoneSlotCheck(player: Player, stone: ItemStack?, button: WButton, equipmentTipsText: WTextList, stoneTipsText: WTextList) {
         //点击镶嵌石物品槽时调用
         button.h = 0
-        stoneTipsText.content = ArrayList()
+        if(equipmentTipsText.content.equals(stoneTipsText.content)) equipmentTipsText.content = listOf()
+        stoneTipsText.content = listOf()
         if (stone != null) {
             val tips = embeddingStoneCheck(stone)
             if (tips.isEmpty()) {
@@ -118,10 +119,11 @@ object EmbeddingTools {
         WuxieAPI.updateGui(player)
     }
 
-    fun equipmentSlotCheck(player: Player, equipment: ItemStack?, button: WButton, equipmentTipsText: WTextList) {
+    fun equipmentSlotCheck(player: Player, equipment: ItemStack?, button: WButton, equipmentTipsText: WTextList, stoneTipsText: WTextList) {
         //点击装备物品槽时调用
         button.w = 0
-        equipmentTipsText.content = ArrayList()
+        if(stoneTipsText.content.equals(equipmentTipsText.content)) stoneTipsText.content = listOf()
+        equipmentTipsText.content = listOf()
         if (equipment != null) {
             val tips = embeddingEquipmentCheck(equipment)
             if (tips.isEmpty()) {
@@ -143,8 +145,8 @@ object EmbeddingTools {
         val stoneLore = stone.itemMeta!!.lore!!
         val embedded = HashSet<String>()
         val itemLore = equipment.itemMeta!!.lore!!
-        var itemType = ""
-        var itemLevel = -1
+        var equipType = ""
+        var equipLevel = -1
         var stoneLevel = -1
         for (lore in itemLore) {
             if (lore.contains(USED_SLOT)) {
@@ -152,18 +154,17 @@ object EmbeddingTools {
                 embedded.add(embeddedName)
             }
             if (lore.contains(LEVEL_MARKER)) {
-                itemLevel = getLevel(stringWithoutColor(lore))
+                equipLevel = getLevel(stringWithoutColor(lore))
             }
             if (lore.contains(ITEM_TYPE_MARK)) {
                 for (type1 in TYPES.keys) {
-                    if (!itemType.isEmpty()) break
+                    if (!equipType.isEmpty()) break
                     if (lore.contains(type1)) {
-                        itemType = type1
-                        break
+                        equipType = type1
                     }
                     for (type2 in TYPES[type1]!!) {
                         if (lore.contains(type2)) {
-                            itemType = type2
+                            equipType = type2
                             break
                         }
                     }
@@ -175,13 +176,13 @@ object EmbeddingTools {
                 stoneLevel = getLevel(stringWithoutColor(lore))
             }
         }
-        if (itemType.isEmpty() || itemLevel == -1) {
+        if (equipType.isEmpty() || equipLevel == -1) {
             return "§c无法镶嵌"
         }
-        if (!typeCheck(itemType, stoneLore) || stoneLevel == -1) {
+        if (!typeCheck(equipType, stoneLore) || stoneLevel == -1) {
             return "§c部位不符"
         }
-        if (itemLevel > stoneLevel) {
+        if (equipLevel > stoneLevel) {
             return "§c品阶不符"
         }
         val stoneName = getPureString(
@@ -229,19 +230,30 @@ object EmbeddingTools {
     }
 
     private fun typeCheck(equipmentType: String, stoneLore: List<String>): Boolean {
-        var type = ""
+        var stoneType = ""
         for (lore in stoneLore) {
             if (lore.contains(STONE_TYPE_MARKER)) {
-                val index = lore.indexOf(STONE_TYPE_MARKER) + STONE_TYPE_MARKER.length
-                type = getPureString(lore.substring(index))
-                break
+                if (lore.contains(WILD_CARD)) return true
+
+                for (type1 in TYPES.keys) {
+                    if (!stoneType.isEmpty()) break
+                    if (lore.contains(type1)) {
+                        stoneType = type1
+                    }
+                    for (type2 in TYPES[type1]!!) {
+                        if (lore.contains(type2)) {
+                            stoneType = type2
+                            break
+                        }
+                    }
+                }
             }
         }
-        if (type == WILD_CARD) return true
-        if (type == equipmentType) return true
+
+        if (stoneType == equipmentType) return true
         for (type1 in TYPES.keys) {
-            if (type1 == type) {
-                return TYPES[type]!!.contains(equipmentType)
+            if (type1 == stoneType) {
+                return TYPES[stoneType]!!.contains(equipmentType)
             }
         }
         return false

@@ -97,8 +97,9 @@ object EventListener {
 
                 val equip = (e.component as WSlot).itemStack
                 val button = e.screen.container.getComponent("embedding_button") as WButton
-                val textList = e.screen.container.getComponent("equipment_tips") as WTextList
-                EmbeddingTools.equipmentSlotCheck(e.player,equip,button,textList)
+                val equipmentTipsText = e.screen.container.getComponent("equipment_tips") as WTextList
+                val stoneTipsText = e.screen.container.getComponent("stone_tips") as WTextList
+                EmbeddingTools.equipmentSlotCheck(e.player,equip,button,equipmentTipsText, stoneTipsText)
                 return
             }
             if (e.component.id == "stone_slot"){
@@ -109,8 +110,9 @@ object EventListener {
 
                 val stone = (e.component as WSlot).itemStack
                 val button = e.screen.container.getComponent("embedding_button") as WButton
-                val textList = e.screen.container.getComponent("stone_tips") as WTextList
-                EmbeddingTools.stoneSlotCheck(e.player,stone,button,textList)
+                val equipmentTipsText = e.screen.container.getComponent("equipment_tips") as WTextList
+                val stoneTipsText = e.screen.container.getComponent("stone_tips") as WTextList
+                EmbeddingTools.stoneSlotCheck(e.player,stone,button,equipmentTipsText, stoneTipsText)
                 return
             }
         }
