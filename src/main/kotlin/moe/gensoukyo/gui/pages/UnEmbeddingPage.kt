@@ -80,6 +80,8 @@ class UnEmbeddingPage : Page {
                             component
                         )
                     })
+
+                    EmbeddingTools.unEmbeddingCheck(newEquipment,guiContainer,pl)
                 } else {
                     tipsText.content = listOf("§c背包不足")
                 }

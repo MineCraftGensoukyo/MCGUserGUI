@@ -104,8 +104,8 @@ object EventListener {
         }
         if (e.screen.id == "摘除镶嵌UI") {
             if(e.component.id == "equipment_slot"){
-                val equip = (e.component as WSlot).itemStack;
-                EmbeddingTools.unEmbeddingCheck(equip,e.screen.container,e.player);
+                val equip = (e.component as WSlot).itemStack
+                EmbeddingTools.unEmbeddingCheck(equip,e.screen.container,e.player)
                 return
             }
         }

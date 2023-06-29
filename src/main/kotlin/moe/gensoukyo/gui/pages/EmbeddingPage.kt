@@ -72,9 +72,12 @@ class EmbeddingPage : Page {
                 val newStone = stoneSlot.itemStack.clone()
                 newStone.amount = newStone.amount - 1
                 stoneSlot.itemStack = newStone
-                button.w = 0
+
+                if(!EmbeddingTools.embeddingEquipmentCheck(newEquipment).isEmpty()) button.w = 0
                 button.h = 0
+
                 equipmentTipsText.content = listOf("§a镶嵌成功")
+
             } else {
                 equipmentTipsText.content = listOf(tips)
             }

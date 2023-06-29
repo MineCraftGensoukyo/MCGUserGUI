@@ -211,7 +211,7 @@ object EmbeddingTools {
         } else ""
     }
 
-    private fun embeddingEquipmentCheck(equipment: ItemStack): String {
+    fun embeddingEquipmentCheck(equipment: ItemStack): String {
         if (equipment.itemMeta?.lore == null) {
             return "§c无法镶嵌"
         }
