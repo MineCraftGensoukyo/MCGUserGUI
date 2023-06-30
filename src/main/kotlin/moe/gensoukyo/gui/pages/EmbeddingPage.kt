@@ -59,8 +59,8 @@ class EmbeddingPage : Page {
         stoneSlot.isCanDrag = true
         equipmentSlot.emptyTooltips = listOf("§f请放入装备")
         stoneSlot.emptyTooltips = listOf("§f请放入强化石")
-        equipmentTipsText.scale = 0.9
-        stoneTipsText.scale = 0.9
+        equipmentTipsText.scale = 0.7
+        stoneTipsText.scale = 0.7
         button.tooltips = listOf("§f确认镶嵌")
         button.w = 0
         button.h = 0

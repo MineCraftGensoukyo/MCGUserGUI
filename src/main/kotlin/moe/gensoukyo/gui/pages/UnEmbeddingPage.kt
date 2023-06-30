@@ -35,7 +35,7 @@ class UnEmbeddingPage : Page {
         guiContainer, "choose_scroll",
         147, 4, 39, 68, 200
     )
-    private val titleText = WTextList(guiContainer, "title_list", listOf("§1§l摘除镶嵌"), 78, 5, 60, 20)
+    private val titleText = WTextList(guiContainer, "title_list", listOf("§1§l摘 除 镶 嵌"), 78, 5, 60, 20)
     private val tipsText = WTextList(guiContainer, "tips_list", listOf(), 35, 62, 60, 20)
     private val equipmentSlot = WSlot(guiContainer, "equipment_slot", ItemStack(Material.AIR), 88, 42)
     private val decide_button = WButton(
@@ -45,7 +45,7 @@ class UnEmbeddingPage : Page {
     )
 
     override fun getPage(): WxScreen {
-        tipsText.scale = 0.9
+        tipsText.scale = 0.7
         equipmentSlot.emptyTooltips = listOf("§f请放入装备")
         decide_button.w = 45
         decide_button.h = 13
@@ -91,6 +91,7 @@ class UnEmbeddingPage : Page {
         equipmentSlot.isCanDrag = true
         scroll.barWidth = 5
         scroll.isShowScrollBar = false
+        titleText.scale = 1.2
         guiContainer.add(decide_button)
         guiContainer.add(titleText)
         guiContainer.add(tipsText)
