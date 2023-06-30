@@ -137,10 +137,10 @@ object EmbeddingTools {
 
     fun embeddingApprovalCheck(equipment: ItemStack?, stone: ItemStack?): String {
         if (equipment == null || equipment.itemMeta?.lore == null) {
-            return "§c无法镶嵌"
+            return "§4§l无法镶嵌"
         }
         if (stone == null || stone.itemMeta?.lore == null) {
-            return "§c无法镶嵌"
+            return "§4§l无法镶嵌"
         }
         val stoneLore = stone.itemMeta!!.lore!!
         val embedded = HashSet<String>()
@@ -177,13 +177,13 @@ object EmbeddingTools {
             }
         }
         if (equipType.isEmpty() || equipLevel == -1) {
-            return "§c无法镶嵌"
+            return "§4§l无法镶嵌"
         }
         if (!typeCheck(equipType, stoneLore) || stoneLevel == -1) {
-            return "§c部位不符"
+            return "§4§l部位不符"
         }
         if (equipLevel > stoneLevel) {
-            return "§c品阶不符"
+            return "§4§l品阶不符"
         }
         val stoneName = getPureString(
             getStringWithouHead(
@@ -191,13 +191,13 @@ object EmbeddingTools {
             )
         )
         return if (embedded.contains(stoneName)) {
-            "§c效果重复"
+            "§4§l效果重复"
         } else ""
     }
 
     private fun embeddingStoneCheck(stone: ItemStack): String {
         if (stone.itemMeta?.lore == null) {
-            return "§c非镶嵌石"
+            return "§4§l非镶嵌石"
         }
         val stoneLore = stone.itemMeta!!.lore
         var isStone = false
@@ -208,13 +208,13 @@ object EmbeddingTools {
             }
         }
         return if (!isStone) {
-            "§c非镶嵌石"
+            "§4§l非镶嵌石"
         } else ""
     }
 
     fun embeddingEquipmentCheck(equipment: ItemStack): String {
         if (equipment.itemMeta?.lore == null) {
-            return "§c无法镶嵌"
+            return "§4§l无法镶嵌"
         }
         var canEmbedding = false
         val itemLore = equipment.itemMeta!!.lore
@@ -225,7 +225,7 @@ object EmbeddingTools {
             }
         }
         return if (!canEmbedding) {
-            "§c无空槽位"
+            "§4§l无空槽位"
         } else ""
     }
 
@@ -369,13 +369,13 @@ object EmbeddingTools {
                     }
                 }
                 if (num == 0) {
-                    tipsText.content = listOf("§c无镶嵌石")
+                    tipsText.content = listOf("§4§l无镶嵌石")
                 } else {
                     decide_button.isCanPress = true
                 }
             }
             else{
-                tipsText.content = listOf("§c不是装备")
+                tipsText.content = listOf("§4§l不是装备")
             }
         }
         WuxieAPI.updateGui(player)

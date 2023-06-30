@@ -83,7 +83,7 @@ class EmbeddingPage : Page {
 
                 imageSuccess.w = 24
                 imageSuccess.h = 24
-                equipmentTipsText.content = listOf("§a镶嵌成功")
+                equipmentTipsText.content = listOf("§a§l镶嵌成功")
 
             } else {
                 imageFail.w = 24

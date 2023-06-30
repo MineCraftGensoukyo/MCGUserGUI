@@ -35,7 +35,7 @@ class UnEmbeddingPage : Page {
         guiContainer, "choose_scroll",
         147, 4, 39, 68, 200
     )
-    private val titleText = WTextList(guiContainer, "title_list", listOf("§9§l摘除镶嵌"), 78, 5, 60, 20)
+    private val titleText = WTextList(guiContainer, "title_list", listOf("§1§l摘除镶嵌"), 78, 5, 60, 20)
     private val tipsText = WTextList(guiContainer, "tips_list", listOf(), 35, 62, 60, 20)
     private val equipmentSlot = WSlot(guiContainer, "equipment_slot", ItemStack(Material.AIR), 88, 42)
     private val decide_button = WButton(
@@ -61,7 +61,7 @@ class UnEmbeddingPage : Page {
                 if (value.isSelect) unembeddingList.add(key)
             }
             if (unembeddingList.isEmpty()) {
-                tipsText.content = listOf("§c未选择")
+                tipsText.content = listOf("§4§l未选择")
             } else {
                 val returnList = EmbeddingTools.unEmbedding(itemLore, unembeddingList)
                 val newLore = returnList.first
@@ -81,9 +81,9 @@ class UnEmbeddingPage : Page {
                     })
 
                     EmbeddingTools.unEmbeddingCheck(newEquipment,guiContainer,pl)
-                    tipsText.content = listOf("§a摘除成功")
+                    tipsText.content = listOf("§a§l摘除成功")
                 } else {
-                    tipsText.content = listOf("§c背包不足")
+                    tipsText.content = listOf("§4§l背包不足")
                 }
             }
             WuxieAPI.updateGui(pl)
