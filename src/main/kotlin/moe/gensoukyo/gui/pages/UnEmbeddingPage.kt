@@ -35,7 +35,7 @@ class UnEmbeddingPage : Page {
         guiContainer, "choose_scroll",
         147, 4, 39, 68, 200
     )
-    private val titleText = WTextList(guiContainer, "title_list", listOf("§1§l摘 除 镶 嵌"), 78, 5, 60, 20)
+    private val titleText = WTextList(guiContainer, "title_list", listOf("§1§l摘 除 镶 嵌"), 65, 4, 60, 20)
     private val tipsText = WTextList(guiContainer, "tips_list", listOf(), 35, 62, 60, 20)
     private val equipmentSlot = WSlot(guiContainer, "equipment_slot", ItemStack(Material.AIR), 88, 42)
     private val decide_button = WButton(
