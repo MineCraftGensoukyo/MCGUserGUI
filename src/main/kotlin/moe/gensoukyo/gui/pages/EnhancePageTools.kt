@@ -18,7 +18,7 @@ object EnhancePageTools : PageTools{
         }
         val equipInfo = getEquipmentInfo(equip)
         equipText.scale = 0.7
-        if (equipInfo["validity"] == 0) {
+        if (equipInfo["validity"] != 1) {
             equipText.content = listOf("§4§l无法强化")
             return
         }

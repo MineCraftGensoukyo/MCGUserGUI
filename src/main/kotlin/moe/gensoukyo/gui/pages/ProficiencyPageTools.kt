@@ -17,7 +17,7 @@ object ProficiencyPageTools : PageTools{
         }
         val equipInfo = LoreInfoTools.getEquipmentInfo(weapon)
         weaponText.scale = 0.7
-        if (equipInfo["validity"] == 0) {
+        if (equipInfo["validity"] != 1) {
             weaponText.content = listOf("§4§l无法转移")
             return
         }
@@ -37,7 +37,7 @@ object ProficiencyPageTools : PageTools{
         }
         val equipInfo = LoreInfoTools.getEquipmentInfo(extract)
         extractText.scale = 0.7
-        if (equipInfo["validity"] == 0) {
+        if (equipInfo["validity"] != 1) {
             extractText.content = listOf("§4§l无法提取")
             return
         }

@@ -47,11 +47,11 @@ object ProficiencyOperations {
         }
         val equipInfoFrom = LoreInfoTools.getEquipmentInfo(weaponFrom)
         val equipInfoTo = LoreInfoTools.getEquipmentInfo(weaponTo)
-        if (equipInfoFrom["validity"] == 0) {
+        if (equipInfoFrom["validity"] != 1) {
             pl.sendMessage("§c请放入合法武器！")
             return Pair(null, null)
         }
-        if (equipInfoTo["validity"] == 0) {
+        if (equipInfoTo["validity"] != 1) {
             pl.sendMessage("§c请放入合法武器！")
             return Pair(null, null)
         }
@@ -94,7 +94,7 @@ object ProficiencyOperations {
             return Pair(null, null)
         }
         val equipInfo = LoreInfoTools.getEquipmentInfo(weapon)
-        if (equipInfo["validity"] == 0) {
+        if (equipInfo["validity"] != 1) {
             pl.sendMessage("§c请放入合法武器！")
             return Pair(null, null)
         }

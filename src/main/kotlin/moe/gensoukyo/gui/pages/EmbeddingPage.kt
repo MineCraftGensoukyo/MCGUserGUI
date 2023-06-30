@@ -94,6 +94,7 @@ class EmbeddingPage : Page {
             WuxieAPI.updateGui(pl)
         }
         guiContainer.add(button)
+        titleText.scale = 1.2
         guiContainer.add(titleText)
         guiContainer.add(stoneTipsText)
         guiContainer.add(equipmentTipsText)

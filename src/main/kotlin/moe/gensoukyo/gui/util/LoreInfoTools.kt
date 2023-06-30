@@ -10,6 +10,7 @@ object LoreInfoTools {
             return hashMapOf("validity" to 0)
         }
         var isWeapon = false
+        var isArmor = false
         var limitLevel = -1
         var enhanceLevel = -1
         var quality = -1
@@ -22,6 +23,9 @@ object LoreInfoTools {
             if (content.contains("装备类型")) {
                 if (content.contains("武器")) {
                     isWeapon = true
+                }
+                if (content.contains("防具")) {
+                    isArmor = true
                 }
             }
             if (content.contains("需要等级")) {
@@ -52,16 +56,30 @@ object LoreInfoTools {
                 }
             }
         }
-        if (!isWeapon || limitLevel == -1 || enhanceLevel == -1 || quality == -1) {
-            return hashMapOf("validity" to 0)
+        if (isWeapon) {
+            if (limitLevel == -1 || enhanceLevel == -1 || quality == -1) {
+                return hashMapOf("validity" to 0)
+            }
+            return hashMapOf(
+                "validity" to 1,
+                "limitLevel" to limitLevel,
+                "enhanceLevel" to enhanceLevel,
+                "quality" to quality,
+                "proficiency" to proficiency
+            )
         }
-        return hashMapOf(
-            "validity" to 1,
-            "limitLevel" to limitLevel,
-            "enhanceLevel" to enhanceLevel,
-            "quality" to quality,
-            "proficiency" to proficiency
-        )
+        if (isArmor) {
+            if (limitLevel == -1 || quality == -1) {
+                return hashMapOf("validity" to 0)
+            }
+            return hashMapOf(
+                "validity" to 2,
+                "limitLevel" to limitLevel,
+                "quality" to quality,
+                "proficiency" to proficiency
+            )
+        }
+        return hashMapOf("validity" to 0)
     }
 
     fun getStoneInfo(stone: ItemStack): HashMap<String, Int> {

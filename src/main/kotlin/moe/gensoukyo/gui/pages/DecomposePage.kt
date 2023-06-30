@@ -4,9 +4,11 @@ import me.wuxie.wakeshow.wakeshow.ui.WInventoryScreen
 import me.wuxie.wakeshow.wakeshow.ui.WxScreen
 import me.wuxie.wakeshow.wakeshow.ui.component.WButton
 import me.wuxie.wakeshow.wakeshow.ui.component.WSlot
+import me.wuxie.wakeshow.wakeshow.ui.component.WTextList
 import moe.gensoukyo.gui.config.MainConfig.conf
 import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
+import taboolib.common.platform.function.warning
 
 class DecomposePage : Page {
     private val VERSION = conf["imageVersion"] as String
@@ -23,6 +25,10 @@ class DecomposePage : Page {
     private val BUTTON_Y = conf["decompose.button.y"] as Int
     private val BUTTON_W = conf["decompose.button.w"] as Int
     private val BUTTON_H = conf["decompose.button.h"] as Int
+    private val EQUIP_TEXT_X = conf["decompose.equipText.x"] as Int
+    private val EQUIP_TEXT_Y = conf["decompose.equipText.y"] as Int
+    private val OUTPUT_TEXT_X = conf["decompose.outputText.x"] as Int
+    private val OUTPUT_TEXT_Y = conf["decompose.outputText.y"] as Int
 
     private val decomposeGui =
         WInventoryScreen("分解UI", BG_URL, -1, -1, 190, 190, 15, 110)
@@ -34,6 +40,12 @@ class DecomposePage : Page {
     private val decomposeButton =
         WButton(guiContainer, "decompose", "",
             BTN_URL_1, BTN_URL_2, BTN_URL_3, BUTTON_X, BUTTON_Y)
+    private val equipText =
+        WTextList(guiContainer, "equipment_text", listOf(), EQUIP_TEXT_X, EQUIP_TEXT_Y, 60, 0)
+    private val outputText =
+        WTextList(guiContainer, "output_text", listOf(), OUTPUT_TEXT_X, OUTPUT_TEXT_Y, 60, 0)
+    private val titleText =
+        WTextList(guiContainer, "title_text", listOf("§1§l分  解"), 80, 4, 40, 20)
 
     override fun getPage(): WxScreen {
         equipmentSlot.isCanDrag = true
@@ -44,7 +56,20 @@ class DecomposePage : Page {
         decomposeButton.tooltips = listOf("§f分解")
         decomposeButton.w = BUTTON_W
         decomposeButton.h = BUTTON_H
+        decomposeButton.setFunction { _, pl ->
+            try {
+                // TODO: 分解
+            } catch (e: Exception) {
+                warning(e, e.stackTrace.first())
+            }
+        }
         guiContainer.add(decomposeButton)
+        equipText.scale = 0.0
+        guiContainer.add(equipText)
+        outputText.scale = 0.0
+        guiContainer.add(outputText)
+        titleText.scale = 1.2
+        guiContainer.add(titleText)
         return decomposeGui
     }
 }

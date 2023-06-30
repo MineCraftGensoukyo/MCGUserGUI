@@ -9,6 +9,7 @@ import me.wuxie.wakeshow.wakeshow.ui.component.WButton
 import me.wuxie.wakeshow.wakeshow.ui.component.WScrollingContainer
 import me.wuxie.wakeshow.wakeshow.ui.component.WSlot
 import me.wuxie.wakeshow.wakeshow.ui.component.WTextList
+import moe.gensoukyo.gui.pages.DecomposePageTools
 import moe.gensoukyo.gui.pages.EnhancePageTools
 import moe.gensoukyo.gui.pages.Pages.pages
 import moe.gensoukyo.gui.pages.ProficiencyPageTools
@@ -88,6 +89,17 @@ object EventListener {
                 return
             }
         }
+        if (e.screen.id == "分解UI") {
+            if (e.component.id == "equipment" || e.component.id == "output") {
+                val equip = (e.screen.container.getComponent("equipment") as WSlot).itemStack
+                val output = (e.screen.container.getComponent("output") as WSlot).itemStack
+                val equipText = e.screen.container.getComponent("equipment_text") as WTextList
+                val outputText = e.screen.container.getComponent("output_text") as WTextList
+                DecomposePageTools.refresh(equip, output, equipText, outputText)
+                WuxieAPI.updateGui(e.player)
+                return
+            }
+        }
         if (e.screen.id == "镶嵌UI") {
             if (e.component.id == "equipment_slot"){
                 e.screen.container.getComponent("image_success").w = 0
@@ -141,6 +153,10 @@ object EventListener {
             (e.screen.container.getComponent("weapon_to_text") as WTextList).scale = 0.0
             (e.screen.container.getComponent("weapon_extract_text") as WTextList).scale = 0.0
         }
+        if (e.screen.id == "分解UI") {
+            (e.screen.container.getComponent("equipment_text") as WTextList).scale = 0.0
+            (e.screen.container.getComponent("output_text") as WTextList).scale = 0.0
+        }
         if (e.screen.id == "镶嵌UI") {
             e.screen.container.getComponent("image_success").w = 0
             e.screen.container.getComponent("image_success").h = 0
@@ -170,7 +186,7 @@ object EventListener {
         pages.forEach {
             if (it.value != null) {
                 val guiData =
-                    DataToken("${iPlayer.name}_${it}_Gui", WxScreen::class.java) { null }
+                    DataToken("${iPlayer.name}_${it.key}_Gui", WxScreen::class.java) { null }
                 if (guiData[iPlayer.tempdata] != null) {
                     val gui = guiData[iPlayer.tempdata] as WxScreen
                     it.value!!.giveBackItems(e.player, gui)

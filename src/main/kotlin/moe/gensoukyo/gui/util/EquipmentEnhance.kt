@@ -39,7 +39,7 @@ object EquipmentEnhance {
             return Pair(0, null)
         }
         val equipInfo = getEquipmentInfo(equip)
-        if (equipInfo["validity"] == 0) {
+        if (equipInfo["validity"] != 1) {
             pl.sendMessage("§c请放入合法武器！")
             return Pair(0, null)
         }
