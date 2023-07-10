@@ -23,8 +23,7 @@ object EmbeddingTools {
     //以下为镶嵌标识符
     //以下为镶嵌石内的lore
     //镶嵌石LORE中表示镶嵌石品阶的记号
-    private const val LEVEL_MARKER = "§d品阶 ·"
-    private const val STONE_START = "§f§l打造部件: "
+    private const val LEVEL_MARKER = "品阶 ·"
     private const val STONE_TYPE_MARKER = "§f» §7部位: "
     private const val STONE_TEXT = "§f» §7类型: §f镶嵌石"
     private const val EMBEDDING_ATTRIBUTE_MARKER = "§f» §7效果:"
@@ -185,11 +184,7 @@ object EmbeddingTools {
         if (equipLevel > stoneLevel) {
             return "§4§l品阶不符"
         }
-        val stoneName = getPureString(
-            getStringWithouHead(
-                stone.itemMeta!!.displayName, STONE_START
-            )
-        )
+        val stoneName = stone.itemMeta!!.displayName
         return if (embedded.contains(stoneName)) {
             "§4§l效果重复"
         } else ""
@@ -264,7 +259,7 @@ object EmbeddingTools {
         val newAttribute: MutableList<String> = ArrayList()
         val itemLore = equipment.itemMeta!!.lore
         val stoneLore = stone.itemMeta!!.lore
-        val stoneName = getStringWithouHead(stone.itemMeta!!.displayName, STONE_START).trim { it <= ' ' }
+        val stoneName = stone.itemMeta!!.displayName.trim { it <= ' ' }
         newAttribute.add(0, USED_SLOT + stoneName)
         for (lore in stoneLore!!) {
             if (lore.contains(LEVEL_MARKER)) {
