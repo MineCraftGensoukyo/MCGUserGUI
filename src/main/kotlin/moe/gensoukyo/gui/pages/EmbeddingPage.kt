@@ -45,11 +45,15 @@ class EmbeddingPage : Page {
     private val titleText = WTextList(guiContainer, "title_text", listOf("§1§l镶  嵌"), 80, 4, 40, 20)
     private val equipmentTipsText = WTextList(
         guiContainer, "equipment_tips", listOf(),
-        149, 30, 60, 20
+        150, 30, 60, 0
     )
     private val stoneTipsText = WTextList(
         guiContainer, "stone_tips", listOf(),
-        9, 20, 60, 20
+        10, 20, 60, 0
+    )
+    private val stoneValueText = WTextList(
+        guiContainer, "stone_value", listOf(),
+        25, 30, 20, 0
     )
     private val stoneSlot = WSlot(guiContainer, "stone_slot", ItemStack(Material.AIR), 51, 41)
     private val equipmentSlot = WSlot(guiContainer, "equipment_slot", ItemStack(Material.AIR), 101, 41)
@@ -61,6 +65,7 @@ class EmbeddingPage : Page {
         stoneSlot.emptyTooltips = listOf("§f请放入镶嵌石")
         equipmentTipsText.scale = 0.7
         stoneTipsText.scale = 0.7
+        stoneValueText.scale = 1.0
         button.tooltips = listOf("§f确认镶嵌")
         button.w = 0
         button.h = 0
@@ -78,7 +83,7 @@ class EmbeddingPage : Page {
                 newStone.amount = newStone.amount - 1
                 stoneSlot.itemStack = newStone
 
-                EmbeddingTools.stoneSlotCheck(pl,newStone,button,equipmentTipsText, stoneTipsText)
+                EmbeddingTools.stoneSlotCheck(pl,newStone,button,equipmentTipsText, stoneTipsText, stoneValueText)
                 EmbeddingTools.equipmentSlotCheck(pl,newEquipment,button, equipmentTipsText, stoneTipsText)
 
                 imageSuccess.w = 24
@@ -97,6 +102,7 @@ class EmbeddingPage : Page {
         titleText.scale = 1.2
         guiContainer.add(titleText)
         guiContainer.add(stoneTipsText)
+        guiContainer.add(stoneValueText)
         guiContainer.add(equipmentTipsText)
         guiContainer.add(equipmentSlot)
         guiContainer.add(stoneSlot)

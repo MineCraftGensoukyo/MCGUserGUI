@@ -124,7 +124,9 @@ object EventListener {
                 val button = e.screen.container.getComponent("embedding_button") as WButton
                 val equipmentTipsText = e.screen.container.getComponent("equipment_tips") as WTextList
                 val stoneTipsText = e.screen.container.getComponent("stone_tips") as WTextList
-                EmbeddingTools.stoneSlotCheck(e.player,stone,button,equipmentTipsText, stoneTipsText)
+                val stoneValueText = e.screen.container.getComponent("stone_value") as WTextList
+                EmbeddingTools.stoneSlotCheck(e.player,stone,button,equipmentTipsText,
+                    stoneTipsText, stoneValueText)
                 return
             }
         }

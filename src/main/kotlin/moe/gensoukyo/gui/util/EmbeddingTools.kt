@@ -102,17 +102,22 @@ object EmbeddingTools {
         return stone
     }
 
-    fun stoneSlotCheck(player: Player, stone: ItemStack?, button: WButton, equipmentTipsText: WTextList, stoneTipsText: WTextList) {
+    fun stoneSlotCheck(player: Player, stone: ItemStack?,
+                       button: WButton, equipmentTipsText: WTextList,
+                       stoneTipsText: WTextList, stoneValueText: WTextList) {
         //点击镶嵌石物品槽时调用
         button.h = 0
         if(equipmentTipsText.content.equals(stoneTipsText.content)) equipmentTipsText.content = listOf()
         stoneTipsText.content = listOf()
+        stoneValueText.content = listOf()
         if (stone != null) {
             val tips = embeddingStoneCheck(stone)
-            if (tips.isEmpty()) {
+            if (tips.size > 1) {
                 button.h = 25
+                stoneTipsText.content = listOf(tips[0])
+                stoneValueText.content = listOf(tips[1])
             } else {
-                stoneTipsText.content = listOf(tips)
+                stoneTipsText.content = tips
             }
         }
         WuxieAPI.updateGui(player)
@@ -125,11 +130,10 @@ object EmbeddingTools {
         equipmentTipsText.content = listOf()
         if (equipment != null) {
             val tips = embeddingEquipmentCheck(equipment)
-            if (tips.isEmpty()) {
+            if (tips.contains("品阶")) {
                 button.w = 25
-            } else {
-                equipmentTipsText.content = listOf(tips)
             }
+            equipmentTipsText.content = listOf(tips)
         }
         WuxieAPI.updateGui(player)
     }
@@ -194,9 +198,9 @@ object EmbeddingTools {
         return ""
     }
 
-    fun embeddingStoneCheck(stone: ItemStack): String {
+    fun embeddingStoneCheck(stone: ItemStack): List<String> {
         if (stone.itemMeta?.lore == null) {
-            return "§4§l非镶嵌石"
+            return listOf("§4§l非镶嵌石")
         }
         val stoneLore = stone.itemMeta!!.lore
         var isStone = false
@@ -206,9 +210,19 @@ object EmbeddingTools {
                 break
             }
         }
-        return if (!isStone) {
-            "§4§l非镶嵌石"
-        } else ""
+        if (!isStone) {
+            return listOf("§4§l非镶嵌石")
+        } else {
+            for (lore in stoneLore) {
+                if (lore.contains(EMBEDDING_ATTRIBUTE_MARKER)) {
+                    val attribute = getStringWithouHead(lore, EMBEDDING_ATTRIBUTE_MARKER)
+                    val attrName = getPureString(attribute.split("+")[0])
+                    val attrValue = getPureString(attribute.split("+")[1])
+                    return listOf("§1§l${attrName}", "§b§l${attrValue}")
+                }
+            }
+            return listOf()
+        }
     }
 
     fun embeddingEquipmentCheck(equipment: ItemStack): String {
@@ -223,9 +237,17 @@ object EmbeddingTools {
                 break
             }
         }
-        return if (!canEmbedding) {
-            "§4§l无空槽位"
-        } else ""
+        if (!canEmbedding) {
+            return "§4§l无空槽位"
+        } else {
+            for (lore in itemLore) {
+                if (lore.contains(LEVEL_MARKER)) {
+                    val level = getLevel(stringWithoutColor(lore))
+                    return "§1§l品阶: ${level}"
+                }
+            }
+            return ""
+        }
     }
 
     private fun typeCheck(equipmentType: String, stoneLore: List<String>): Boolean {
