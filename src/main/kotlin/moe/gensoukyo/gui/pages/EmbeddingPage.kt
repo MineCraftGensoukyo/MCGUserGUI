@@ -64,7 +64,7 @@ class EmbeddingPage : Page {
         button.tooltips = listOf("§f确认镶嵌")
         button.w = 0
         button.h = 0
-        button.function = ClickFunction { t: Int, pl: Player? ->
+        button.function = ClickFunction { t: Int, pl: Player ->
             imageSuccess.w = 0
             imageSuccess.h = 0
             imageFail.w = 0
@@ -78,12 +78,12 @@ class EmbeddingPage : Page {
                 newStone.amount = newStone.amount - 1
                 stoneSlot.itemStack = newStone
 
-                if(!EmbeddingTools.embeddingEquipmentCheck(newEquipment).isEmpty()) button.w = 0
-                button.h = 0
+                EmbeddingTools.stoneSlotCheck(pl,newEquipment,button,equipmentTipsText, stoneTipsText)
+                EmbeddingTools.equipmentSlotCheck(pl,newStone,button, equipmentTipsText, stoneTipsText)
 
                 imageSuccess.w = 24
                 imageSuccess.h = 24
-                equipmentTipsText.content = listOf("§a§l镶嵌成功")
+//                equipmentTipsText.content = listOf("§a§l镶嵌成功")
 
             } else {
                 imageFail.w = 24

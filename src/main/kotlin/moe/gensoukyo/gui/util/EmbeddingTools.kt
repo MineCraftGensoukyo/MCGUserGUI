@@ -18,6 +18,7 @@ import java.util.concurrent.atomic.AtomicLong
 import java.util.function.Consumer
 import java.util.regex.Pattern
 import java.util.stream.Collectors
+import kotlin.collections.HashSet
 
 object EmbeddingTools {
     //以下为镶嵌标识符
@@ -38,7 +39,7 @@ object EmbeddingTools {
     private const val EMPTY_SLOT = "§8○ 空部件"
     private const val USED_SLOT = "§a● "
     private const val ISOLATION = "§8§m §m §m §m §m §m §m §m §m §m §m §m §m §m " +
-            "§m §m §m §m §m §m §m §m §m §m §m §m §m §m §m §m §m §m §m §m §m §m §m §m"
+            "§m §m §m §m §m §m §m §m §m §m §m §m §m §m §m §m §m §m §m §m §m §m §m"
     private const val ITEM_TYPE_MARK = "§a§l！ §c装备类型: "
     private const val ATTRIBUTE_MARKER = "§7*"
 
@@ -185,12 +186,16 @@ object EmbeddingTools {
             return "§4§l品阶不符"
         }
         val stoneName = stone.itemMeta!!.displayName
-        return if (embedded.contains(stoneName)) {
-            "§4§l效果重复"
-        } else ""
+        for(str in embedded){
+            if(stoneName.contains(str)){
+                return "§4§l效果重复"
+            }
+        }
+
+        return ""
     }
 
-    private fun embeddingStoneCheck(stone: ItemStack): String {
+    fun embeddingStoneCheck(stone: ItemStack): String {
         if (stone.itemMeta?.lore == null) {
             return "§4§l非镶嵌石"
         }
@@ -283,6 +288,9 @@ object EmbeddingTools {
             }
             newLoreList.add(lore)
         }
+
+        removeRepeatIsolation(newLoreList)
+
         val newEquipment = equipment.clone()
         val newMeta = equipment.itemMeta!!.clone()
         newMeta.lore = newLoreList
@@ -296,7 +304,7 @@ object EmbeddingTools {
         val newLore: MutableList<String> = ArrayList()
         val stoneLevelMap = HashMap<Int, Int>()
         var unEmbedding = false
-        for (lore in itemLore) {
+        for ((index,lore) in itemLore.withIndex()) {
             if (lore.contains(USED_SLOT)) {
                 val stoneName = getStringWithouHead(lore, USED_SLOT).trim { it <= ' ' }
                 if (unembeddingList.contains(stoneName)) {
@@ -317,6 +325,9 @@ object EmbeddingTools {
                 }
                 if (lore.contains(ISOLATION)) {
                     unEmbedding = false
+                    if(itemLore.size>index+1&&!itemLore[index+1].contains(USED_SLOT)&&!itemLore[index+1].contains(EMPTY_SLOT)){
+                        newLore.add(ISOLATION)
+                    }
                     continue
                 }
             }
@@ -374,6 +385,22 @@ object EmbeddingTools {
             }
         }
         WuxieAPI.updateGui(player)
+    }
+
+    fun removeRepeatIsolation(loreList: MutableList<String>){
+        val iterator = loreList.listIterator()
+        while (iterator.hasNext()){
+            val lore1 = iterator.next()
+            if(lore1.equals(ISOLATION)&&iterator.hasNext()){
+                val lore2 = iterator.next()
+                if(lore2.equals(ISOLATION)){
+                    iterator.remove()
+                }
+                if(iterator.hasPrevious()){
+                    iterator.previous()
+                }
+            }
+        }
     }
 
     fun inventoryPlentyFor(
