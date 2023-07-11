@@ -38,8 +38,7 @@ object EmbeddingTools {
     //以下为装备内的lore
     private const val EMPTY_SLOT = "§8○ 空部件"
     private const val USED_SLOT = "§a● "
-    private const val ISOLATION = "§8§m §m §m §m §m §m §m §m §m §m §m §m §m §m " +
-            "§m §m §m §m §m §m §m §m §m §m §m §m §m §m §m §m §m §m §m §m §m §m §m"
+    private const val ISOLATION_MARK = "§m"
     private const val ITEM_TYPE_MARK = "§a§l！ §c装备类型: "
     private const val ATTRIBUTE_MARKER = "§7*"
 
@@ -136,7 +135,7 @@ object EmbeddingTools {
     }
 
     fun embeddingApprovalCheck(equipment: ItemStack?, stone: ItemStack?): String {
-        if (equipment == null || equipment.itemMeta?.lore == null) {
+        if (equipment == null || equipment.itemMeta?.lore == null || getIsolationString(equipment.itemMeta!!.lore!!).isEmpty()) {
             return "§4§l无法镶嵌"
         }
         if (stone == null || stone.itemMeta?.lore == null) {
@@ -262,9 +261,10 @@ object EmbeddingTools {
     fun embedding(equipment: ItemStack, stone: ItemStack): ItemStack {
         val newLoreList: MutableList<String> = ArrayList()
         val newAttribute: MutableList<String> = ArrayList()
-        val itemLore = equipment.itemMeta!!.lore
+        val itemLore = equipment.itemMeta!!.lore!!
         val stoneLore = stone.itemMeta!!.lore
         val stoneName = stone.itemMeta!!.displayName.trim { it <= ' ' }
+        val isolation = getIsolationString(itemLore)
         newAttribute.add(0, USED_SLOT + stoneName)
         for (lore in stoneLore!!) {
             if (lore.contains(LEVEL_MARKER)) {
@@ -282,14 +282,14 @@ object EmbeddingTools {
         for (lore in itemLore!!) {
             if (lore.contains(EMPTY_SLOT) && !done) {
                 newLoreList.addAll(newAttribute)
-                newLoreList.add(ISOLATION)
+                newLoreList.add(isolation)
                 done = true
                 continue
             }
             newLoreList.add(lore)
         }
 
-        removeRepeatIsolation(newLoreList)
+        removeRepeatIsolation(newLoreList,isolation)
 
         val newEquipment = equipment.clone()
         val newMeta = equipment.itemMeta!!.clone()
@@ -303,6 +303,7 @@ object EmbeddingTools {
         : Pair<List<String>, List<ItemStack>> {
         val newLore: MutableList<String> = ArrayList()
         val stoneLevelMap = HashMap<Int, Int>()
+        val isolation = getIsolationString(itemLore)
         var unEmbedding = false
         for ((index,lore) in itemLore.withIndex()) {
             if (lore.contains(USED_SLOT)) {
@@ -323,10 +324,10 @@ object EmbeddingTools {
                         stoneLevelMap[level] = 1
                     }
                 }
-                if (lore.contains(ISOLATION)) {
+                if (lore.contains(isolation)) {
                     unEmbedding = false
                     if(itemLore.size>index+1&&!itemLore[index+1].contains(USED_SLOT)&&!itemLore[index+1].contains(EMPTY_SLOT)){
-                        newLore.add(ISOLATION)
+                        newLore.add(isolation)
                     }
                     continue
                 }
@@ -387,13 +388,26 @@ object EmbeddingTools {
         WuxieAPI.updateGui(player)
     }
 
-    fun removeRepeatIsolation(loreList: MutableList<String>){
+    fun getIsolationString(equipLore: List<String>): String{
+        //检测中文
+        val regex = Regex("[\u4e00-\u9fa5]")
+        var isolation = ""
+        for(lore in equipLore){
+            if(lore.contains(ISOLATION_MARK)&&!regex.containsMatchIn(lore)&&lore.length>isolation.length){
+                isolation = lore
+            }
+        }
+
+        return isolation
+    }
+
+    fun removeRepeatIsolation(loreList: MutableList<String>,isolation: String){
         val iterator = loreList.listIterator()
         while (iterator.hasNext()){
             val lore1 = iterator.next()
-            if(lore1.equals(ISOLATION)&&iterator.hasNext()){
+            if(lore1.equals(isolation)&&iterator.hasNext()){
                 val lore2 = iterator.next()
-                if(lore2.equals(ISOLATION)){
+                if(lore2.equals(isolation)){
                     iterator.remove()
                 }
                 if(iterator.hasPrevious()){

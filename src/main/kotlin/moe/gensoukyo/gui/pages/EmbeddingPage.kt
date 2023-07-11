@@ -78,8 +78,8 @@ class EmbeddingPage : Page {
                 newStone.amount = newStone.amount - 1
                 stoneSlot.itemStack = newStone
 
-                EmbeddingTools.stoneSlotCheck(pl,newEquipment,button,equipmentTipsText, stoneTipsText)
-                EmbeddingTools.equipmentSlotCheck(pl,newStone,button, equipmentTipsText, stoneTipsText)
+                EmbeddingTools.stoneSlotCheck(pl,newStone,button,equipmentTipsText, stoneTipsText)
+                EmbeddingTools.equipmentSlotCheck(pl,newEquipment,button, equipmentTipsText, stoneTipsText)
 
                 imageSuccess.w = 24
                 imageSuccess.h = 24
