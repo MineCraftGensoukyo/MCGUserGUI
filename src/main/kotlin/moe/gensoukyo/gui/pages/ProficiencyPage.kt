@@ -14,21 +14,20 @@ import taboolib.common.platform.function.warning
 import taboolib.platform.util.isAir
 
 class ProficiencyPage : Page {
-    private val VERSION = conf["imageVersion"] as String
     private val BG_URL =
-        "https://cdn.jsdelivr.net/gh/MineCraftGensoukyo/MCGImages@${VERSION}/img/Proficiency_BG.png"
+        "https://img.gensoukyo.moe:843/images/Proficiency_BG.png"
     private val EXT_BTN_URL_1 =
-        "https://cdn.jsdelivr.net/gh/MineCraftGensoukyo/MCGImages@${VERSION}/img/Proficiency_Extract_BTN_1.png"
+        "https://img.gensoukyo.moe:843/images/Proficiency_Extract_BTN_1.png"
     private val EXT_BTN_URL_2 =
-        "https://cdn.jsdelivr.net/gh/MineCraftGensoukyo/MCGImages@${VERSION}/img/Proficiency_Extract_BTN_2.png"
+        "https://img.gensoukyo.moe:843/images/Proficiency_Extract_BTN_2.png"
     private val EXT_BTN_URL_3 =
-        "https://cdn.jsdelivr.net/gh/MineCraftGensoukyo/MCGImages@${VERSION}/img/Proficiency_Extract_BTN_3.png"
+        "https://img.gensoukyo.moe:843/images/Proficiency_Extract_BTN_3.png"
     private val TRS_BTN_URL_1 =
-        "https://cdn.jsdelivr.net/gh/MineCraftGensoukyo/MCGImages@${VERSION}/img/Proficiency_Transfer_BTN_1.png"
+        "https://img.gensoukyo.moe:843/images/Proficiency_Transfer_BTN_1.png"
     private val TRS_BTN_URL_2 =
-        "https://cdn.jsdelivr.net/gh/MineCraftGensoukyo/MCGImages@${VERSION}/img/Proficiency_Transfer_BTN_2.png"
+        "https://img.gensoukyo.moe:843/images/Proficiency_Transfer_BTN_2.png"
     private val TRS_BTN_URL_3 =
-        "https://cdn.jsdelivr.net/gh/MineCraftGensoukyo/MCGImages@${VERSION}/img/Proficiency_Transfer_BTN_3.png"
+        "https://img.gensoukyo.moe:843/images/Proficiency_Transfer_BTN_3.png"
 
     private val proficiencyGui =
         WInventoryScreen("熟练度UI", BG_URL, -1, -1, 190, 190, 15, 110)

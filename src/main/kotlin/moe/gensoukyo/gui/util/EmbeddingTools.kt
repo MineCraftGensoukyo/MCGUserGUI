@@ -364,9 +364,8 @@ object EmbeddingTools {
     }
 
     private fun createStoneCheckBox(stoneName: String, num: Int, scrollContainer: Container): WCheckBox {
-        val VERSION = conf["imageVersion"] as String
-        val CHECK_1 = "https://cdn.jsdelivr.net/gh/MineCraftGensoukyo/MCGImages@${VERSION}/img/Unembedding_Check_1.png"
-        val CHECK_2 = "https://cdn.jsdelivr.net/gh/MineCraftGensoukyo/MCGImages@${VERSION}/img/Unembedding_Check_2.png"
+        val CHECK_1 = "https://img.gensoukyo.moe:843/images/Unembedding_Check_1.png"
+        val CHECK_2 = "https://img.gensoukyo.moe:843/images/Unembedding_Check_2.png"
         val checkBox = WCheckBox(
             scrollContainer, stoneName,
             CHECK_1, CHECK_2,

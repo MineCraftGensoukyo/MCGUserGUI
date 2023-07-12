@@ -21,6 +21,7 @@ taboolib {
             name("DavidWang19")
             name("ZakeArias")
             name("satorishi")
+            name("xiaoyv404")
         }
         dependencies {
             name("WakeShow").with("bukkit")

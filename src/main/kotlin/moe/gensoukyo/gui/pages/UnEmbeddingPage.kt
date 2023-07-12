@@ -15,15 +15,10 @@ import org.bukkit.inventory.ItemStack
 import java.util.function.Consumer
 
 class UnEmbeddingPage : Page {
-    private val VERSION = conf["imageVersion"] as String
-    private val GUI_BACKGROUND =
-        String.format("https://cdn.jsdelivr.net/gh/MineCraftGensoukyo/MCGImages@%s/img/Unembedding_BG.png", VERSION)
-    private val BTN_1 =
-        String.format("https://cdn.jsdelivr.net/gh/MineCraftGensoukyo/MCGImages@%s/img/Unembedding_BTN_1.png", VERSION)
-    private val BTN_2 =
-        String.format("https://cdn.jsdelivr.net/gh/MineCraftGensoukyo/MCGImages@%s/img/Unembedding_BTN_2.png", VERSION)
-    private val BTN_3 =
-        String.format("https://cdn.jsdelivr.net/gh/MineCraftGensoukyo/MCGImages@%s/img/Unembedding_BTN_3.png", VERSION)
+    private val GUI_BACKGROUND = "https://img.gensoukyo.moe:843/images/Unembedding_BG.png"
+    private val BTN_1 = "https://img.gensoukyo.moe:843/images/Unembedding_BTN_1.png"
+    private val BTN_2 = "https://img.gensoukyo.moe:843/images/Unembedding_BTN_2.png"
+    private val BTN_3 = "https://img.gensoukyo.moe:843/images/Unembedding_BTN_3.png"
     private val GUI_POS = Pos(-1, -1, 190, 190, 0, 0)
     private val gui = WInventoryScreen(
         "摘除镶嵌UI",
@@ -80,7 +75,7 @@ class UnEmbeddingPage : Page {
                         )
                     })
 
-                    EmbeddingTools.unEmbeddingCheck(newEquipment,guiContainer,pl)
+                    EmbeddingTools.unEmbeddingCheck(newEquipment, guiContainer, pl)
                     tipsText.content = listOf("§a§l摘除成功")
                 } else {
                     tipsText.content = listOf("§4§l背包不足")

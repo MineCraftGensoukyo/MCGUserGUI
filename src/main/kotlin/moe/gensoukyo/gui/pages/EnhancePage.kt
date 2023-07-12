@@ -14,13 +14,12 @@ import moe.gensoukyo.gui.util.EquipmentEnhance
 import taboolib.common.platform.function.warning
 
 class EnhancePage : Page{
-    private val VERSION = conf["imageVersion"] as String
-    private val BG_URL = "https://cdn.jsdelivr.net/gh/MineCraftGensoukyo/MCGImages@${VERSION}/img/Enhance_BG.png"
-    private val BTN_URL_1 = "https://cdn.jsdelivr.net/gh/MineCraftGensoukyo/MCGImages@${VERSION}/img/Enhance_BTN_1.png"
-    private val BTN_URL_2 = "https://cdn.jsdelivr.net/gh/MineCraftGensoukyo/MCGImages@${VERSION}/img/Enhance_BTN_2.png"
-    private val BTN_URL_3 = "https://cdn.jsdelivr.net/gh/MineCraftGensoukyo/MCGImages@${VERSION}/img/Enhance_BTN_3.png"
-    private val SUCCESS_URL = "https://cdn.jsdelivr.net/gh/MineCraftGensoukyo/MCGImages@${VERSION}/img/Enhance_Success.png"
-    private val FAIL_URL = "https://cdn.jsdelivr.net/gh/MineCraftGensoukyo/MCGImages@${VERSION}/img/Enhance_Fail.png"
+    private val BG_URL = "https://img.gensoukyo.moe:843/images/Enhance_BG.png"
+    private val BTN_URL_1 = "https://img.gensoukyo.moe:843/images/Enhance_BTN_1.png"
+    private val BTN_URL_2 = "https://img.gensoukyo.moe:843/images/Enhance_BTN_2.png"
+    private val BTN_URL_3 = "https://img.gensoukyo.moe:843/images/Enhance_BTN_3.png"
+    private val SUCCESS_URL = "https://img.gensoukyo.moe:843/images/Enhance_Success.png"
+    private val FAIL_URL = "https://img.gensoukyo.moe:843/images/Enhance_Fail.png"
 
     private val enhanceGui =
         WInventoryScreen("强化UI", BG_URL, -1, -1, 190, 190, 15, 110)

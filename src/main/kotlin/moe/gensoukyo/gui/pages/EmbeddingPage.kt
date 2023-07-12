@@ -16,13 +16,12 @@ import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 
 class EmbeddingPage : Page {
-    private val VERSION = conf["imageVersion"] as String
-    private val GUI_BACKGROUND = "https://cdn.jsdelivr.net/gh/MineCraftGensoukyo/MCGImages@${VERSION}/img/Enhance_BG.png"
-    private val BTN_1 = "https://cdn.jsdelivr.net/gh/MineCraftGensoukyo/MCGImages@${VERSION}/img/Enhance_BTN_1.png"
-    private val BTN_2 = "https://cdn.jsdelivr.net/gh/MineCraftGensoukyo/MCGImages@${VERSION}/img/Enhance_BTN_2.png"
-    private val BTN_3 = "https://cdn.jsdelivr.net/gh/MineCraftGensoukyo/MCGImages@${VERSION}/img/Enhance_BTN_3.png"
-    private val SUCCESS_URL = "https://cdn.jsdelivr.net/gh/MineCraftGensoukyo/MCGImages@${VERSION}/img/Enhance_Success.png"
-    private val FAIL_URL = "https://cdn.jsdelivr.net/gh/MineCraftGensoukyo/MCGImages@${VERSION}/img/Enhance_Fail.png"
+    private val GUI_BACKGROUND = "https://img.gensoukyo.moe:843/images/Enhance_BG.png"
+    private val BTN_1 = "https://img.gensoukyo.moe:843/images/Enhance_BTN_1.png"
+    private val BTN_2 = "https://img.gensoukyo.moe:843/images/Enhance_BTN_2.png"
+    private val BTN_3 = "https://img.gensoukyo.moe:843/images/Enhance_BTN_3.png"
+    private val SUCCESS_URL = "https://img.gensoukyo.moe:843/images/Enhance_Success.png"
+    private val FAIL_URL = "https://img.gensoukyo.moe:843/images/Enhance_Fail.png"
     private val guiTestPos = Pos(-1, -1, 190, 190, 0, 0)
     private val gui = WInventoryScreen(
         "镶嵌UI",
