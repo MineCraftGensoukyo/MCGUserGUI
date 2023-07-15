@@ -348,7 +348,7 @@ object EmbeddingTools {
                 }
                 if (lore.contains(isolation)) {
                     unEmbedding = false
-                    if(itemLore.size==index||(itemLore.size>index+1&&!itemLore[index+1].contains(USED_SLOT)&&!itemLore[index+1].contains(EMPTY_SLOT))){
+                    if(itemLore.size==index+1||(itemLore.size>index+1&&!itemLore[index+1].contains(USED_SLOT)&&!itemLore[index+1].contains(EMPTY_SLOT))){
                         newLore.add(isolation)
                     }
                     continue
