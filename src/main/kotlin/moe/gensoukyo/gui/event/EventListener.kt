@@ -17,6 +17,7 @@ import moe.gensoukyo.gui.util.ClearCache
 import moe.gensoukyo.gui.util.EmbeddingTools
 import moe.gensoukyo.lib.maps.DataToken
 import moe.gensoukyo.lib.server.npcApi
+import moe.gensoukyo.gui.config.MainConfig.printDebugInfo
 import org.bukkit.event.player.PlayerLoginEvent
 import org.bukkit.event.player.PlayerQuitEvent
 import taboolib.common.platform.event.EventPriority
@@ -28,7 +29,9 @@ object EventListener {
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     fun playerCloseScreenEventListener(e: PlayerCloseScreenEvent) {
-        info("${e.player.name}关闭${e.screen.id} - ${e.screen}")
+        if (printDebugInfo) {
+            info("${e.player.name}关闭${e.screen.id} - ${e.screen}")
+        }
         pages.forEach {
             if (e.screen.id == it.key) {
                 if (it.value != null) {
@@ -40,7 +43,9 @@ object EventListener {
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     fun playerPostClickComponentEventListener(e: PlayerPostClickComponentEvent) {
-        info("${e.player.name}点击${e.component.id} - ${e.component}")
+        if (printDebugInfo) {
+            info("${e.player.name}点击${e.component.id} - ${e.component}")
+        }
         if (e.screen.id == "强化UI") {
             if (e.component.id == "equipment") {
                 e.screen.container.getComponent("image_success").w = 0

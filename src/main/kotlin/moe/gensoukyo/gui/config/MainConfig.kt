@@ -17,6 +17,7 @@ object MainConfig {
 
     lateinit var weapon_types: HashSet<String>
     lateinit var armor_types: HashSet<String>
+    var printDebugInfo = false
 
     @Awake(LifeCycle.ENABLE)
     fun loadItems() {
@@ -24,9 +25,10 @@ object MainConfig {
     }
 
     @Awake(LifeCycle.ENABLE)
-    fun loadEquipmentTypes() {
+    fun loadConfigs() {
         weapon_types = conf.getStringList("equipType.weapon").toHashSet()
         armor_types = conf.getStringList("equipType.armor").toHashSet()
+        printDebugInfo = conf["printDebugInfo"] as Boolean
     }
 
     fun YamlConfiguration.reload() = loadItems()

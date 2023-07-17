@@ -56,7 +56,7 @@ object MCGUserGUI : Plugin() {
                     try {
                         configs.conf.reload()
                         configs.items.reload()
-                        configs.loadEquipmentTypes()
+                        configs.loadConfigs()
                         if (configs.conf["clearCache"] as Boolean) {
                             onlinePlayers().forEach { player ->
                                 ClearCache.run(player.cast())
