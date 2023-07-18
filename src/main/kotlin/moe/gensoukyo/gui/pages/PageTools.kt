@@ -5,4 +5,6 @@ import org.bukkit.entity.Player
 
 interface PageTools {
     fun giveBackItems(pl: Player, gui: WxScreen)
+
+    fun guiPrepare(gui: WxScreen)
 }

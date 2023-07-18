@@ -61,4 +61,15 @@ object EnhancePageTools : PageTools{
         stoneIn?.amount = 0
     }
 
+    override fun guiPrepare(gui: WxScreen) {
+        gui.cursor = null
+        gui.container.getComponent("image_success").w = 0
+        gui.container.getComponent("image_success").h = 0
+        gui.container.getComponent("image_fail").w = 0
+        gui.container.getComponent("image_fail").h = 0
+        (gui.container.getComponent("enhance_level_text") as WTextList).scale = 0.0
+        (gui.container.getComponent("stone_level_text") as WTextList).scale = 0.0
+        (gui.container.getComponent("stone_prob_text") as WTextList).scale = 0.0
+    }
+
 }
