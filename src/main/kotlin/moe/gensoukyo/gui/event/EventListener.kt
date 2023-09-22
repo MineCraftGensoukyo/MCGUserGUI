@@ -6,7 +6,6 @@ import me.wuxie.wakeshow.wakeshow.api.event.PlayerOpenScreenEvent
 import me.wuxie.wakeshow.wakeshow.api.event.PlayerPostClickComponentEvent
 import me.wuxie.wakeshow.wakeshow.ui.WxScreen
 import me.wuxie.wakeshow.wakeshow.ui.component.WButton
-import me.wuxie.wakeshow.wakeshow.ui.component.WScrollingContainer
 import me.wuxie.wakeshow.wakeshow.ui.component.WSlot
 import me.wuxie.wakeshow.wakeshow.ui.component.WTextList
 import moe.gensoukyo.gui.pages.DecomposePageTools
@@ -17,18 +16,34 @@ import moe.gensoukyo.gui.util.ClearCache
 import moe.gensoukyo.gui.util.EmbeddingTools
 import moe.gensoukyo.lib.maps.DataToken
 import moe.gensoukyo.lib.server.npcApi
+import moe.gensoukyo.gui.config.MainConfig.printDebugInfo
 import org.bukkit.event.player.PlayerLoginEvent
 import org.bukkit.event.player.PlayerQuitEvent
 import taboolib.common.platform.event.EventPriority
 import taboolib.common.platform.event.SubscribeEvent
 import taboolib.common.platform.function.info
-import java.util.function.Consumer
 
 object EventListener {
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
+    fun playerOpenScreenEventListener(e: PlayerOpenScreenEvent) {
+        if (printDebugInfo) {
+            info("${e.player.name}打开${e.screen.id} - ${e.screen}")
+        }
+        pages.forEach {
+            if (e.screen.id == it.key) {
+                if (it.value != null) {
+                    it.value!!.guiPrepare(e.screen)
+                }
+            }
+        }
+    }
+
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
     fun playerCloseScreenEventListener(e: PlayerCloseScreenEvent) {
-        info("${e.player.name}关闭${e.screen.id} - ${e.screen}")
+        if (printDebugInfo) {
+            info("${e.player.name}关闭${e.screen.id} - ${e.screen}")
+        }
         pages.forEach {
             if (e.screen.id == it.key) {
                 if (it.value != null) {
@@ -40,7 +55,9 @@ object EventListener {
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     fun playerPostClickComponentEventListener(e: PlayerPostClickComponentEvent) {
-        info("${e.player.name}点击${e.component.id} - ${e.component}")
+        if (printDebugInfo) {
+            info("${e.player.name}点击${e.component.id} - ${e.component}")
+        }
         if (e.screen.id == "强化UI") {
             if (e.component.id == "equipment") {
                 e.screen.container.getComponent("image_success").w = 0
@@ -136,44 +153,6 @@ object EventListener {
                 EmbeddingTools.unEmbeddingCheck(equip,e.screen.container,e.player)
                 return
             }
-        }
-    }
-
-    @SubscribeEvent(priority = EventPriority.HIGHEST)
-    fun playerOpenScreenEventListener(e: PlayerOpenScreenEvent) {
-        if (e.screen.id == "强化UI") {
-            e.screen.container.getComponent("image_success").w = 0
-            e.screen.container.getComponent("image_success").h = 0
-            e.screen.container.getComponent("image_fail").w = 0
-            e.screen.container.getComponent("image_fail").h = 0
-            (e.screen.container.getComponent("enhance_level_text") as WTextList).scale = 0.0
-            (e.screen.container.getComponent("stone_level_text") as WTextList).scale = 0.0
-            (e.screen.container.getComponent("stone_prob_text") as WTextList).scale = 0.0
-        }
-        if (e.screen.id == "熟练度UI") {
-            (e.screen.container.getComponent("weapon_from_text") as WTextList).scale = 0.0
-            (e.screen.container.getComponent("weapon_to_text") as WTextList).scale = 0.0
-            (e.screen.container.getComponent("weapon_extract_text") as WTextList).scale = 0.0
-        }
-        if (e.screen.id == "分解UI") {
-            (e.screen.container.getComponent("equipment_text") as WTextList).scale = 0.0
-            (e.screen.container.getComponent("output_text") as WTextList).scale = 0.0
-        }
-        if (e.screen.id == "镶嵌UI") {
-            e.screen.container.getComponent("image_success").w = 0
-            e.screen.container.getComponent("image_success").h = 0
-            e.screen.container.getComponent("image_fail").w = 0
-            e.screen.container.getComponent("image_fail").h = 0
-            (e.screen.container.getComponent("equipment_tips") as WTextList).content = listOf()
-            (e.screen.container.getComponent("stone_tips") as WTextList).content = listOf()
-            e.screen.container.getComponent("embedding_button").w = 0
-            e.screen.container.getComponent("embedding_button").h = 0
-        }
-        if (e.screen.id == "摘除镶嵌UI") {
-            (e.screen.container.getComponent("tips_list") as WTextList).content = listOf()
-            (e.screen.container.getComponent("decide_button") as WButton).isCanPress = false
-            val scrollContainer = (e.screen.container.getComponent("choose_scroll") as WScrollingContainer).container
-            scrollContainer.componentMap.keys.forEach(Consumer { stone: String? -> scrollContainer.remove(stone) })
         }
     }
 

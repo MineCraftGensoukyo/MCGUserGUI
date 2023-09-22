@@ -26,6 +26,12 @@ object DecomposePageTools : PageTools{
         output?.amount = 0
     }
 
+    override fun guiPrepare(gui: WxScreen) {
+        gui.cursor = null
+        (gui.container.getComponent("equipment_text") as WTextList).scale = 0.0
+        (gui.container.getComponent("output_text") as WTextList).scale = 0.0
+    }
+
     fun refresh(equip: ItemStack?, output: ItemStack?,
                 equipText: WTextList, outputText: WTextList) {
         var outputInfo = false

@@ -2,6 +2,7 @@ package moe.gensoukyo.gui.pages
 
 import me.wuxie.wakeshow.wakeshow.api.WuxieAPI
 import me.wuxie.wakeshow.wakeshow.ui.WxScreen
+import moe.gensoukyo.gui.util.CheckModExistence
 import moe.gensoukyo.lib.maps.DataToken
 import moe.gensoukyo.lib.server.npcApi
 import org.bukkit.entity.Player
@@ -10,10 +11,24 @@ import taboolib.common.platform.function.warning
 interface Page {
     fun getPage(): WxScreen
     fun showPage(player: Player) {
+        if (!CheckModExistence.run(player)) {
+            player.sendTitle(
+                "§c未安装WakeShow模组",
+                "§f请使用启动游戏.exe更新", 10, 70, 20
+            )
+            return
+        }
         WuxieAPI.openGui(player.player, this.getPage())
     }
 
     fun showCachePage(player: Player) {
+        if (!CheckModExistence.run(player)) {
+            player.sendTitle(
+                "§c未安装WakeShow模组",
+                "§f请使用启动游戏.exe更新", 10, 70, 20
+            )
+            return
+        }
         val iPlayer = player.npcApi
         try {
             val guiData =
