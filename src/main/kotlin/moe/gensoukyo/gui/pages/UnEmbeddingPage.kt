@@ -15,10 +15,10 @@ import org.bukkit.inventory.ItemStack
 import java.util.function.Consumer
 
 class UnEmbeddingPage : Page {
-    private val GUI_BACKGROUND = "https://img.gensoukyo.moe:843/images/Unembedding_BG.png"
-    private val BTN_1 = "https://img.gensoukyo.moe:843/images/Unembedding_BTN_1.png"
-    private val BTN_2 = "https://img.gensoukyo.moe:843/images/Unembedding_BTN_2.png"
-    private val BTN_3 = "https://img.gensoukyo.moe:843/images/Unembedding_BTN_3.png"
+    private val GUI_BACKGROUND = "location:mcgproject:textures/gui/unembedding_bg.png"
+    private val BTN_1 = "location:mcgproject:textures/gui/unembedding_btn_1.png"
+    private val BTN_2 = "location:mcgproject:textures/gui/unembedding_btn_2.png"
+    private val BTN_3 = "location:mcgproject:textures/gui/unembedding_btn_3.png"
     private val GUI_POS = Pos(-1, -1, 190, 190, 0, 0)
     private val gui = WInventoryScreen(
         "摘除镶嵌UI",

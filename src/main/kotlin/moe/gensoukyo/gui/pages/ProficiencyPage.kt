@@ -15,19 +15,19 @@ import taboolib.platform.util.isAir
 
 class ProficiencyPage : Page {
     private val BG_URL =
-        "https://img.gensoukyo.moe:843/images/Proficiency_BG.png"
+        "location:mcgproject:textures/gui/proficiency_bg.png"
     private val EXT_BTN_URL_1 =
-        "https://img.gensoukyo.moe:843/images/Proficiency_Extract_BTN_1.png"
+        "location:mcgproject:textures/gui/proficiency_extract_btn_1.png"
     private val EXT_BTN_URL_2 =
-        "https://img.gensoukyo.moe:843/images/Proficiency_Extract_BTN_2.png"
+        "location:mcgproject:textures/gui/proficiency_extract_btn_2.png"
     private val EXT_BTN_URL_3 =
-        "https://img.gensoukyo.moe:843/images/Proficiency_Extract_BTN_3.png"
+        "location:mcgproject:textures/gui/proficiency_extract_btn_3.png"
     private val TRS_BTN_URL_1 =
-        "https://img.gensoukyo.moe:843/images/Proficiency_Transfer_BTN_1.png"
+        "location:mcgproject:textures/gui/proficiency_transfer_btn_1.png"
     private val TRS_BTN_URL_2 =
-        "https://img.gensoukyo.moe:843/images/Proficiency_Transfer_BTN_2.png"
+        "location:mcgproject:textures/gui/proficiency_transfer_btn_2.png"
     private val TRS_BTN_URL_3 =
-        "https://img.gensoukyo.moe:843/images/Proficiency_Transfer_BTN_3.png"
+        "location:mcgproject:textures/gui/proficiency_transfer_btn_3.png"
 
     private val proficiencyGui =
         WInventoryScreen("熟练度UI", BG_URL, -1, -1, 190, 190, 15, 110)

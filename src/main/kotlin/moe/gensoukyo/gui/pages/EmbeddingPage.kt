@@ -16,12 +16,12 @@ import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 
 class EmbeddingPage : Page {
-    private val GUI_BACKGROUND = "https://img.gensoukyo.moe:843/images/Enhance_BG.png"
-    private val BTN_1 = "https://img.gensoukyo.moe:843/images/Enhance_BTN_1.png"
-    private val BTN_2 = "https://img.gensoukyo.moe:843/images/Enhance_BTN_2.png"
-    private val BTN_3 = "https://img.gensoukyo.moe:843/images/Enhance_BTN_3.png"
-    private val SUCCESS_URL = "https://img.gensoukyo.moe:843/images/Enhance_Success.png"
-    private val FAIL_URL = "https://img.gensoukyo.moe:843/images/Enhance_Fail.png"
+    private val GUI_BACKGROUND = "location:mcgproject:textures/gui/enhance_bg.png"
+    private val BTN_1 = "location:mcgproject:textures/gui/enhance_btn_1.png"
+    private val BTN_2 = "location:mcgproject:textures/gui/enhance_btn_2.png"
+    private val BTN_3 = "location:mcgproject:textures/gui/enhance_btn_3.png"
+    private val SUCCESS_URL = "location:mcgproject:textures/gui/enhance_success.png"
+    private val FAIL_URL = "location:mcgproject:textures/gui/enhance_fail.png"
     private val guiTestPos = Pos(-1, -1, 190, 190, 0, 0)
     private val gui = WInventoryScreen(
         "镶嵌UI",
