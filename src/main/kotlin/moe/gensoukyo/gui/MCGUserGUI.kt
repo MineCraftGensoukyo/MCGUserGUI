@@ -1,17 +1,17 @@
 package moe.gensoukyo.gui
 
 import taboolib.common.platform.Plugin
+import taboolib.common.platform.function.getDataFolder
 import taboolib.common.platform.function.info
 import taboolib.common.platform.function.pluginId
 import taboolib.common.platform.function.pluginVersion
+import taboolib.expansion.setupPlayerDatabase
+import java.io.File
 
 object MCGUserGUI : Plugin() {
-    override fun onLoad() {
-        // override onLoad()
-    }
-
     override fun onEnable() {
         MCGUserGUICommand().register()
+        setupPlayerDatabase(File(getDataFolder(), "data.db"))
         info("MCGUserGUI加载完毕！")
         info(
             """§6
@@ -28,10 +28,5 @@ object MCGUserGUI : Plugin() {
              ====================================================================
         """.trimIndent()
         )
-    }
-
-
-    override fun onDisable() {
-
     }
 }

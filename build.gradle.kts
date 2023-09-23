@@ -13,6 +13,7 @@ taboolib {
     install("module-database")
     install("module-configuration")
     install("module-lang")
+    install("expansion-player-database")
     classifier = null
     version = "6.0.8-9"
     description {
