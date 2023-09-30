@@ -17,6 +17,7 @@ import moe.gensoukyo.gui.util.EmbeddingTools
 import moe.gensoukyo.lib.maps.DataToken
 import moe.gensoukyo.lib.server.npcApi
 import moe.gensoukyo.gui.config.MainConfig.printDebugInfo
+import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.event.player.PlayerLoginEvent
 import org.bukkit.event.player.PlayerQuitEvent
 import taboolib.common.platform.event.EventPriority
@@ -154,6 +155,9 @@ object EventListener {
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     fun onPlayerLogin(e: PlayerLoginEvent) {
         ClearCache.run(e.player)
+    }
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
+    fun onPlayerJoinEvent(e: PlayerJoinEvent){
         e.player.setupDataContainer()
     }
 

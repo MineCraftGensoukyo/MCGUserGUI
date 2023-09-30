@@ -7,7 +7,7 @@ plugins {
 }
 
 taboolib {
-    install("common")
+    install("common", "common-5")
     install("module-chat")
     install("platform-bukkit")
     install("module-database")
@@ -44,6 +44,8 @@ dependencies {
     compileOnly(fileTree("libs"))
     implementation("org.jetbrains.kotlinx","kotlinx-coroutines-core",coroutines_version)
     implementation("org.jetbrains.kotlinx","kotlinx-coroutines-jdk8",coroutines_version)
+    implementation("com.google.code.gson:gson:2.8.5")
+
     implementation(fileTree("lib"))
 }
 
