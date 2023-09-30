@@ -146,16 +146,16 @@ class MCGUserGUICommand {
             }
             literal("collection", optional = true) {
                 execute<Player> { sender, _, _ ->
-                    val collectionPage = CollectionPage()
-                    collectionPage.showCachePage(sender)
+                    val collectionMainPage = CollectionMainPage()
+                    collectionMainPage.showCachePage(sender)
                 }
                 dynamic {
                     suggestion<ProxyCommandSender> { _, _ ->
                         onlinePlayers().map { it.name }
                     }
                     execute<ProxyCommandSender> { _, _, argument ->
-                        val collectionPage = CollectionPage()
-                        collectionPage.showCachePage(getProxyPlayer(argument)!!.cast())
+                        val collectionMainPage = CollectionMainPage()
+                        collectionMainPage.showCachePage(getProxyPlayer(argument)!!.cast())
                     }
                 }
             }
