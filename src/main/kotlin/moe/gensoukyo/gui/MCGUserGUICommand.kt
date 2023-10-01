@@ -3,6 +3,7 @@ package moe.gensoukyo.gui
 import moe.gensoukyo.gui.config.MainConfig
 import moe.gensoukyo.gui.config.MainConfig.reload
 import moe.gensoukyo.gui.pages.*
+import moe.gensoukyo.gui.pages.collection.CollectionMainPage
 import moe.gensoukyo.gui.util.ClearCache
 import org.bukkit.entity.Player
 import taboolib.common.platform.ProxyCommandSender

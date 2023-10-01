@@ -35,7 +35,7 @@ object EventListener {
         }
         pages.forEach {
             if (e.screen.id == it.key && it.value != null)
-                it.value!!.guiPrepare(e.screen)
+                it.value!!.guiPrepare(e.player, e.screen)
         }
     }
 
@@ -156,8 +156,9 @@ object EventListener {
     fun onPlayerLogin(e: PlayerLoginEvent) {
         ClearCache.run(e.player)
     }
+
     @SubscribeEvent(priority = EventPriority.HIGHEST)
-    fun onPlayerJoinEvent(e: PlayerJoinEvent){
+    fun onPlayerJoinEvent(e: PlayerJoinEvent) {
         e.player.setupDataContainer()
     }
 

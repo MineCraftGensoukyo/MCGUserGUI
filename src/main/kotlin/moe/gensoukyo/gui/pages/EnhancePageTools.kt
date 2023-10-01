@@ -61,7 +61,7 @@ object EnhancePageTools : PageTools{
         stoneIn?.amount = 0
     }
 
-    override fun guiPrepare(gui: WxScreen) {
+    override fun guiPrepare(player:Player, gui: WxScreen) {
         gui.cursor = null
         gui.container.getComponent("image_success").w = 0
         gui.container.getComponent("image_success").h = 0

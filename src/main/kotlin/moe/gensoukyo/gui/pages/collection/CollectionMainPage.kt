@@ -16,15 +16,12 @@ import taboolib.platform.util.giveItem
 import taboolib.platform.util.isAir
 
 
-class MoonCakeCollection : CollectionPage {
-    private val imageRoot = "location:mcgproject:textures/gui"
-    private val backgroundImage = "$imageRoot/collection_mooncake.png"
-
-
+class CollectionMainPage : CollectionPage {
     private val guiTestPos = Pos(-1, -91, 512, 512, 0, 0)
     private val x0 = 175
-    private val y0 = 240
-
+    private val y0 = 246
+    private val imageRoot = "location:mcgproject:textures/gui"
+    private val backgroundImage = "$imageRoot/collection_mobs.png"
 
     private val gui = WInventoryScreen(
         getPageID(),
@@ -34,26 +31,19 @@ class MoonCakeCollection : CollectionPage {
         guiTestPos.w,
         guiTestPos.h,
         x0,
-        y0 + 18 * 6 + 18
+        y0 + 18 * 6 + 12
     )
-    override fun getPageID() = "collection_mooncake"
-    override fun getNextPage() = "collection_akyuu"
-    override fun getLastPage() = "collection_mobs"
+
+    override fun getPageID() = "collection_mobs"
+    override fun getNextPage() = "collection_mooncake"
+    override fun getLastPage() = "collection_akyuu"
 
     override fun getPage(): WxScreen {
         for (l in 0..5)
             for (i in 0..8) {
                 val slotName = "slot$l-$i"
                 val x = x0 + 18 * i
-                val y = y0 + 1 + 18 * l
-                createEmptySlot(gui.container, slotName, x, y)
-            }
-
-        for (l in 0..2)
-            for (i in 0..5) {
-                val slotName = "slot${l}e-$i"
-                val x = x0 + 18 * 3 + 18 * i
-                val y = y0 - 18 * 3 + 18 * l
+                val y = y0 - 6 + 18 * l
                 createEmptySlot(gui.container, slotName, x, y)
             }
 
@@ -73,36 +63,18 @@ class MoonCakeCollection : CollectionPage {
     companion object {
         @SubscribeEvent(EventPriority.HIGHEST)
         fun playerPostClickComponentEventListener(e: PlayerPostClickComponentEvent) {
-            if (e.screen.id != "collection_mooncake") return
+            if (e.screen.id != "collection_mobs") return
             if (!e.component.id.startsWith("slot")) return
 
             val slot = e.component as WSlot
             if (slot.itemStack.isAir()) return
 
-            val lore = slot.itemStack.itemMeta?.lore ?: return giveBackItem(slot, e.player)
-            lore.find { it.contains("食材") } ?: return giveBackItem(slot, e.player)
-            lore.find { it.contains("2023中秋节") } ?: return giveBackItem(slot, e.player)
-
-            e.screen.container.componentMap.filter {
-                it.key.startsWith("slot") && it.key != e.component.id
-            }.map {
-                (it.value as WSlot).itemStack
-            }.filterNot {
-                it.isAir()
-            }.find {
-                it.itemMeta?.displayName == slot.itemStack.itemMeta?.displayName
-            }.run {
-                if (this != null) {
-                    e.player.sendMessage("不能放两打！")
-                    e.player.giveItem(slot.itemStack)
-                    slot.itemStack = ItemStack(Material.AIR)
-                    WuxieAPI.updateGui(e.player)
-                }
-            }
+            if (slot.itemStack.type.name != "ARMOURERS_WORKSHOP_ITEMSKIN")
+                return giveBackItem(slot, e.player)
         }
 
         private fun giveBackItem(slot: WSlot, player: Player) {
-            player.sendMessage("这不是月饼！")
+            player.sendMessage("这不是时装！")
             player.giveItem(slot.itemStack)
             slot.itemStack = ItemStack(Material.AIR)
             WuxieAPI.updateGui(player)

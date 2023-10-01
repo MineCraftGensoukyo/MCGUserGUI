@@ -26,7 +26,7 @@ object DecomposePageTools : PageTools{
         output?.amount = 0
     }
 
-    override fun guiPrepare(gui: WxScreen) {
+    override fun guiPrepare(player:Player, gui: WxScreen) {
         gui.cursor = null
         (gui.container.getComponent("equipment_text") as WTextList).scale = 0.0
         (gui.container.getComponent("output_text") as WTextList).scale = 0.0
