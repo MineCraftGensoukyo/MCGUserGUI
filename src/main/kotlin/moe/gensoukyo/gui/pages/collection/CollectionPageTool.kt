@@ -3,6 +3,7 @@ package moe.gensoukyo.gui.pages.collection
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import me.wuxie.wakeshow.wakeshow.api.WuxieAPI
+import me.wuxie.wakeshow.wakeshow.api.event.PlayerPostClickComponentEvent
 import me.wuxie.wakeshow.wakeshow.ui.WxScreen
 import me.wuxie.wakeshow.wakeshow.ui.component.WButton
 import me.wuxie.wakeshow.wakeshow.ui.component.WSlot
@@ -10,10 +11,14 @@ import moe.gensoukyo.gui.pages.PageTools
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
+import taboolib.common.platform.event.EventPriority
+import taboolib.common.platform.event.SubscribeEvent
+import taboolib.common.platform.function.info
 import taboolib.common.platform.function.severe
 import taboolib.common.platform.function.warning
 import taboolib.expansion.getDataContainer
 import taboolib.platform.util.deserializeToItemStack
+import taboolib.platform.util.giveItem
 import taboolib.platform.util.isAir
 import taboolib.platform.util.serializeToByteArray
 
@@ -23,6 +28,48 @@ object CollectionPageTool : PageTools {
         "collection_mooncake" to MoonCakeCollection(),
         "collection_akyuu" to AkyuuCollection()
     )
+
+    @SubscribeEvent(EventPriority.HIGHEST)
+    fun playerPostClickComponentEventListener(e: PlayerPostClickComponentEvent) {
+        val page = idToPage[e.screen.id] ?: return
+        if (!e.component.id.startsWith("slot")) return
+        val slot = e.component as WSlot
+        if (slot.itemStack.isAir()) return
+        if (!page.checkItemLegal(slot.itemStack)) return giveBackItem(slot, e.player, page.unLegalNotice)
+        if (page.needsLore.isNotEmpty()) {
+            val lore = slot.itemStack.itemMeta?.lore ?: return giveBackItem(slot, e.player, page.unLegalNotice)
+            info(page.needsLore)
+            page.needsLore.forEach { need ->
+                lore.find { it.contains(need) } ?: return giveBackItem(slot, e.player, page.unLegalNotice)
+            }
+        }
+        if (!page.onlyAllowHaveSingleStack)
+            return
+
+        e.screen.container.componentMap.filter {
+            it.key.startsWith("slot") && it.key != e.component.id
+        }.map {
+            (it.value as WSlot).itemStack
+        }.filterNot {
+            it.isAir()
+        }.find {
+            it.itemMeta?.displayName == slot.itemStack.itemMeta?.displayName
+        }.run {
+            if (this != null) {
+                e.player.sendMessage("不能放两打！")
+                e.player.giveItem(slot.itemStack)
+                slot.itemStack = ItemStack(Material.AIR)
+                WuxieAPI.updateGui(e.player)
+            }
+        }
+    }
+
+    private fun giveBackItem(slot: WSlot, player: Player, notice: String) {
+        player.sendMessage(notice)
+        player.giveItem(slot.itemStack)
+        slot.itemStack = ItemStack(Material.AIR)
+        WuxieAPI.updateGui(player)
+    }
 
     override fun giveBackItems(pl: Player, gui: WxScreen) {
         gui.container.componentMap.filter {
@@ -73,7 +120,7 @@ object CollectionPageTool : PageTools {
     private const val buttonLastPageImage = "$imageRoot/collection_lastpage"
     private const val buttonNextPageImage = "$imageRoot/collection_nextpage"
 
-    fun addTageAndButton(gui: WxScreen) {
+    private fun addTageAndButton(gui: WxScreen) {
         WButton(
             gui.container,
             "button_tage_moon_cake",
