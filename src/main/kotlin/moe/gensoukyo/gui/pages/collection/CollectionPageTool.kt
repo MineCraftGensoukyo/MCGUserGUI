@@ -88,11 +88,19 @@ object CollectionPageTool : PageTools {
     override fun guiPrepare(player: Player, gui: WxScreen) {
         gui.cursor = null
         addTageAndButton(gui)
-
         val slots = player.getDataContainer()[gui.id].run {
             Gson().fromJson<Map<String, String>>(
                 this, object : TypeToken<Map<String, String>>() {}.type
             )
+        }.mapValues {
+            info(it)
+            val byteValues = it.value.substring(1, it.value.length - 1).split(",")
+            val bytes = ByteArray(byteValues.size)
+
+            for ((index, byteValue) in byteValues.withIndex()) {
+                bytes[index] = byteValue.trim().toByte()
+            }
+            bytes
         }
         gui.container.componentMap.filter {
             it.key.startsWith("slot")
@@ -100,41 +108,35 @@ object CollectionPageTool : PageTools {
             (it.value as WSlot)
         }.forEach {
             it.itemStack = slots[it.id]?.run {
-                val byteValues = this.substring(1, this.length - 1).split(",")
-                val bytes = ByteArray(byteValues.size)
-
-                for ((index, byteValue) in byteValues.withIndex()) {
-                    bytes[index] = byteValue.trim().toByte()
-                }
-                bytes.deserializeToItemStack(true)
+                this.deserializeToItemStack(true)
             } ?: ItemStack(Material.AIR)
         }
     }
 
-    private const val x0 = 175
-    private const val y0 = 240
-    private const val imageRoot = "location:mcgproject:textures/gui"
-    private const val buttonTageMoonCakeImage = "$imageRoot/collection_tag_mooncake"
-    private const val buttonTageAkyuuImage = "$imageRoot/collection_tag_akyuu"
-    private const val buttonTageMobsImage = "$imageRoot/collection_tag_mobs"
-    private const val buttonLastPageImage = "$imageRoot/collection_lastpage"
-    private const val buttonNextPageImage = "$imageRoot/collection_nextpage"
+    private const val X0 = 175
+    private const val Y0 = 240
+    private const val IMAGE_ROOT = "location:mcgproject:textures/gui"
+    private const val BUTTON_TAGE_MOON_CAKE_IMAGE = "$IMAGE_ROOT/collection_tag_mooncake"
+    private const val BUTTON_TAGE_AKYUU_IMAGE = "$IMAGE_ROOT/collection_tag_akyuu"
+    private const val BUTTON_TAGE_MOBS_IMAGE = "$IMAGE_ROOT/collection_tag_mobs"
+    private const val BUTTON_LAST_PAGE_IMAGE = "$IMAGE_ROOT/collection_lastpage"
+    private const val BUTTON_NEXT_PAGE_IMAGE = "$IMAGE_ROOT/collection_nextpage"
 
     private fun addTageAndButton(gui: WxScreen) {
         WButton(
             gui.container,
             "button_tage_moon_cake",
             "§6§l月饼",
-            "${buttonTageMoonCakeImage}_1.png",
-            "${buttonTageMoonCakeImage}_2.png",
-            "${buttonTageMoonCakeImage}_2.png",
+            "${BUTTON_TAGE_MOON_CAKE_IMAGE}_1.png",
+            "${BUTTON_TAGE_MOON_CAKE_IMAGE}_2.png",
+            "${BUTTON_TAGE_MOON_CAKE_IMAGE}_2.png",
             0,
             0
         ).apply {
             w = 64
             h = 27
-            x = x0 - w - 34
-            y = y0 - h + 2
+            x = X0 - w - 34
+            y = Y0 - h + 2
             gui.container.add(this)
             setFunction { _, player ->
                 if (WuxieAPI.getOpenedGui(player).screen.id == "collection_mooncake")
@@ -148,16 +150,16 @@ object CollectionPageTool : PageTools {
             gui.container,
             "button_tage_mobs",
             "§c§l时装",
-            "${buttonTageMobsImage}_1.png",
-            "${buttonTageMobsImage}_2.png",
-            "${buttonTageMobsImage}_2.png",
+            "${BUTTON_TAGE_MOBS_IMAGE}_1.png",
+            "${BUTTON_TAGE_MOBS_IMAGE}_2.png",
+            "${BUTTON_TAGE_MOBS_IMAGE}_2.png",
             0,
             0
         ).apply {
             w = 64
             h = 27
-            x = x0 + 18 * 9 + 32
-            y = y0 - h + 2 + 27
+            x = X0 + 18 * 9 + 32
+            y = Y0 - h + 2 + 27
             gui.container.add(this)
             setFunction { _, player ->
                 if (WuxieAPI.getOpenedGui(player).screen.id == "collection_mobs")
@@ -171,16 +173,16 @@ object CollectionPageTool : PageTools {
             gui.container,
             "button_tage_akyuu",
             "§5§l藏品",
-            "${buttonTageAkyuuImage}_1.png",
-            "${buttonTageAkyuuImage}_2.png",
-            "${buttonTageAkyuuImage}_2.png",
+            "${BUTTON_TAGE_AKYUU_IMAGE}_1.png",
+            "${BUTTON_TAGE_AKYUU_IMAGE}_2.png",
+            "${BUTTON_TAGE_AKYUU_IMAGE}_2.png",
             0,
             0
         ).apply {
             w = 64
             h = 27
-            x = x0 - w - 34
-            y = y0 - h + 2 + 27
+            x = X0 - w - 34
+            y = Y0 - h + 2 + 27
             gui.container.add(this)
             setFunction { _, player ->
                 if (WuxieAPI.getOpenedGui(player).screen.id == "collection_akyuu")
@@ -194,16 +196,16 @@ object CollectionPageTool : PageTools {
             gui.container,
             "button_last_page",
             "",
-            "${buttonLastPageImage}_1.png",
-            "${buttonLastPageImage}_2.png",
-            "${buttonLastPageImage}_3.png",
+            "${BUTTON_LAST_PAGE_IMAGE}_1.png",
+            "${BUTTON_LAST_PAGE_IMAGE}_2.png",
+            "${BUTTON_LAST_PAGE_IMAGE}_3.png",
             0,
             0
         ).apply {
             w = 30
             h = 54
-            x = x0 - this.w - 42
-            y = y0 + 18 * 5
+            x = X0 - this.w - 42
+            y = Y0 + 18 * 5
             gui.container.add(this)
             setFunction { _, player ->
                 val openedGuiID = WuxieAPI.getOpenedGui(player).screen.id
@@ -223,16 +225,16 @@ object CollectionPageTool : PageTools {
             gui.container,
             "button_next_page",
             "",
-            "${buttonNextPageImage}_1.png",
-            "${buttonNextPageImage}_2.png",
-            "${buttonNextPageImage}_3.png",
+            "${BUTTON_NEXT_PAGE_IMAGE}_1.png",
+            "${BUTTON_NEXT_PAGE_IMAGE}_2.png",
+            "${BUTTON_NEXT_PAGE_IMAGE}_3.png",
             0,
             0
         ).apply {
             this.w = 30
             this.h = 54
-            this.x = x0 + 18 * 9 + 40
-            this.y = y0 + 18 * 5
+            this.x = X0 + 18 * 9 + 40
+            this.y = Y0 + 18 * 5
             gui.container.add(this)
             setFunction { _, player ->
                 val openedGuiID = WuxieAPI.getOpenedGui(player).screen.id
