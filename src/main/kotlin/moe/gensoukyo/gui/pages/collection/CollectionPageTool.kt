@@ -31,7 +31,57 @@ object CollectionPageTool : PageTools {
     @SubscribeEvent(EventPriority.HIGHEST)
     fun playerPostClickComponentEventListener(e: PlayerPostClickComponentEvent) {
         val page = idToPage[e.screen.id] ?: return
-        if (!e.component.id.startsWith("slot")) return
+        when (e.component.id) {
+            "button_tage_moon_cake" -> {
+                if (e.screen.id == "collection_mooncake")
+                    return
+                WuxieAPI.closeGui(e.player)
+                MoonCakeCollection().showCachePage(e.player)
+            }
+
+            "button_tage_mobs" -> {
+                if (e.screen.id == "collection_mobs")
+                    return
+                WuxieAPI.closeGui(e.player)
+                CollectionMainPage().showCachePage(e.player)
+            }
+
+            "button_tage_akyuu" -> {
+                if (e.screen.id == "collection_akyuu")
+                    return
+                WuxieAPI.closeGui(e.player)
+                AkyuuCollection().showCachePage(e.player)
+            }
+
+            "button_last_page" -> {
+                val openedGui = idToPage[e.screen.id]
+                if (openedGui == null) {
+                    severe("非收藏品UI ${e.screen.id} 可以点到收藏品的UI界面")
+                    return
+                }
+                WuxieAPI.closeGui(e.player)
+                val lastPage =
+                    idToPage[openedGui.getLastPage()] ?: return warning("未找到相对页面")
+                lastPage.showCachePage(e.player)
+            }
+
+            "button_next_page" -> {
+                val openedGui = idToPage[e.screen.id]
+                if (openedGui == null) {
+                    severe("非收藏品UI ${e.screen.id} 可以点到收藏品的UI界面")
+                    return
+                }
+                WuxieAPI.closeGui(e.player)
+                val nextPage =
+                    idToPage[openedGui.getNextPage()] ?: return warning("未找到相对页面")
+                nextPage.showCachePage(e.player)
+            }
+        }
+        if (e.component.id.startsWith("slot"))
+            slotClick(e, page)
+    }
+
+    private fun slotClick(e: PlayerPostClickComponentEvent, page: CollectionPage) {
         val slot = e.component as WSlot
         if (slot.itemStack.isAir()) return
         if (!page.checkItemLegal(slot.itemStack)) return giveBackItem(slot, e.player, page.unLegalNotice)
@@ -135,12 +185,6 @@ object CollectionPageTool : PageTools {
             x = X0 - w - 34
             y = Y0 - h + 2
             gui.container.add(this)
-            setFunction { _, player ->
-                if (WuxieAPI.getOpenedGui(player).screen.id == "collection_mooncake")
-                    return@setFunction
-                WuxieAPI.closeGui(player)
-                MoonCakeCollection().showCachePage(player)
-            }
         }
 
         WButton(
@@ -158,12 +202,6 @@ object CollectionPageTool : PageTools {
             x = X0 + 18 * 9 + 32
             y = Y0 - h + 2 + 27
             gui.container.add(this)
-            setFunction { _, player ->
-                if (WuxieAPI.getOpenedGui(player).screen.id == "collection_mobs")
-                    return@setFunction
-                WuxieAPI.closeGui(player)
-                CollectionMainPage().showCachePage(player)
-            }
         }
 
         WButton(
@@ -181,12 +219,6 @@ object CollectionPageTool : PageTools {
             x = X0 - w - 34
             y = Y0 - h + 2 + 27
             gui.container.add(this)
-            setFunction { _, player ->
-                if (WuxieAPI.getOpenedGui(player).screen.id == "collection_akyuu")
-                    return@setFunction
-                WuxieAPI.closeGui(player)
-                AkyuuCollection().showCachePage(player)
-            }
         }
 
         WButton(
@@ -204,18 +236,6 @@ object CollectionPageTool : PageTools {
             x = X0 - this.w - 42
             y = Y0 + 18 * 5
             gui.container.add(this)
-            setFunction { _, player ->
-                val openedGuiID = WuxieAPI.getOpenedGui(player).screen.id
-                val openedGui = idToPage[openedGuiID]
-                if (openedGui == null) {
-                    severe("非收藏品UI $openedGuiID 可以点到收藏品的UI界面")
-                    return@setFunction
-                }
-                WuxieAPI.closeGui(player)
-                val lastPage =
-                    idToPage[openedGui.getNextPage()] ?: return@setFunction warning("未找到相对页面")
-                lastPage.showCachePage(player)
-            }
         }
 
         WButton(
@@ -233,18 +253,6 @@ object CollectionPageTool : PageTools {
             this.x = X0 + 18 * 9 + 40
             this.y = Y0 + 18 * 5
             gui.container.add(this)
-            setFunction { _, player ->
-                val openedGuiID = WuxieAPI.getOpenedGui(player).screen.id
-                val openedGui = idToPage[openedGuiID]
-                if (openedGui == null) {
-                    severe("非收藏品UI $openedGuiID 可以点到收藏品的UI界面")
-                    return@setFunction
-                }
-                WuxieAPI.closeGui(player)
-                val nextPage =
-                    idToPage[openedGui.getNextPage()] ?: return@setFunction warning("未找到相对页面")
-                nextPage.showCachePage(player)
-            }
         }
     }
 }
