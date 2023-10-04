@@ -13,7 +13,6 @@ import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import taboolib.common.platform.event.EventPriority
 import taboolib.common.platform.event.SubscribeEvent
-import taboolib.common.platform.function.info
 import taboolib.common.platform.function.severe
 import taboolib.common.platform.function.warning
 import taboolib.expansion.getDataContainer
@@ -38,7 +37,6 @@ object CollectionPageTool : PageTools {
         if (!page.checkItemLegal(slot.itemStack)) return giveBackItem(slot, e.player, page.unLegalNotice)
         if (page.needsLore.isNotEmpty()) {
             val lore = slot.itemStack.itemMeta?.lore ?: return giveBackItem(slot, e.player, page.unLegalNotice)
-            info(page.needsLore)
             page.needsLore.forEach { need ->
                 lore.find { it.contains(need) } ?: return giveBackItem(slot, e.player, page.unLegalNotice)
             }
@@ -88,12 +86,11 @@ object CollectionPageTool : PageTools {
     override fun guiPrepare(player: Player, gui: WxScreen) {
         gui.cursor = null
         addTageAndButton(gui)
-        val slots = player.getDataContainer()[gui.id].run {
+        val slots = player.getDataContainer()[gui.id]?.run {
             Gson().fromJson<Map<String, String>>(
                 this, object : TypeToken<Map<String, String>>() {}.type
             )
-        }.mapValues {
-            info(it)
+        }?.mapValues {
             val byteValues = it.value.substring(1, it.value.length - 1).split(",")
             val bytes = ByteArray(byteValues.size)
 
@@ -107,7 +104,7 @@ object CollectionPageTool : PageTools {
         }.map {
             (it.value as WSlot)
         }.forEach {
-            it.itemStack = slots[it.id]?.run {
+            it.itemStack = slots?.get(it.id)?.run {
                 this.deserializeToItemStack(true)
             } ?: ItemStack(Material.AIR)
         }
