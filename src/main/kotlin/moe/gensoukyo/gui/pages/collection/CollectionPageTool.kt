@@ -8,11 +8,13 @@ import me.wuxie.wakeshow.wakeshow.ui.WxScreen
 import me.wuxie.wakeshow.wakeshow.ui.component.WButton
 import me.wuxie.wakeshow.wakeshow.ui.component.WSlot
 import moe.gensoukyo.gui.pages.PageTools
+import moe.gensoukyo.lib.reflection.remove
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import taboolib.common.platform.event.EventPriority
 import taboolib.common.platform.event.SubscribeEvent
+import taboolib.common.platform.function.info
 import taboolib.common.platform.function.severe
 import taboolib.common.platform.function.warning
 import taboolib.expansion.getDataContainer
@@ -22,7 +24,8 @@ import taboolib.platform.util.isAir
 import taboolib.platform.util.serializeToByteArray
 
 object CollectionPageTool : PageTools {
-    private val idToPage = linkedMapOf(
+    private val tempData = mutableMapOf<String, MutableMap<String, MutableMap<String, String>>>()
+    val idToPage = linkedMapOf(
         "collection_mobs" to CollectionMainPage(),
         "collection_mooncake" to MoonCakeCollection(),
         "collection_akyuu" to AkyuuCollection()
@@ -32,36 +35,13 @@ object CollectionPageTool : PageTools {
     fun playerPostClickComponentEventListener(e: PlayerPostClickComponentEvent) {
         val page = idToPage[e.screen.id] ?: return
         when (e.component.id) {
-            "button_tage_moon_cake" -> {
-                if (e.screen.id == "collection_mooncake")
-                    return
-                WuxieAPI.closeGui(e.player)
-                MoonCakeCollection().showCachePage(e.player)
-            }
-
-            "button_tage_mobs" -> {
-                if (e.screen.id == "collection_mobs")
-                    return
-                WuxieAPI.closeGui(e.player)
-                CollectionMainPage().showCachePage(e.player)
-            }
-
-            "button_tage_akyuu" -> {
-                if (e.screen.id == "collection_akyuu")
-                    return
-                WuxieAPI.closeGui(e.player)
-                AkyuuCollection().showCachePage(e.player)
-            }
-
             "button_last_page" -> {
                 val openedGui = idToPage[e.screen.id]
                 if (openedGui == null) {
                     severe("非收藏品UI ${e.screen.id} 可以点到收藏品的UI界面")
                     return
                 }
-                WuxieAPI.closeGui(e.player)
-                val lastPage =
-                    idToPage[openedGui.getLastPage()] ?: return warning("未找到相对页面")
+                val lastPage = idToPage[openedGui.getLastPage()] ?: return warning("未找到相对页面")
                 lastPage.showCachePage(e.player)
             }
 
@@ -71,19 +51,27 @@ object CollectionPageTool : PageTools {
                     severe("非收藏品UI ${e.screen.id} 可以点到收藏品的UI界面")
                     return
                 }
-                WuxieAPI.closeGui(e.player)
-                val nextPage =
-                    idToPage[openedGui.getNextPage()] ?: return warning("未找到相对页面")
+                val nextPage = idToPage[openedGui.getNextPage()] ?: return warning("未找到相对页面")
                 nextPage.showCachePage(e.player)
             }
         }
-        if (e.component.id.startsWith("slot"))
-            slotClick(e, page)
+
+        if (e.component.id.startsWith("button_tage_")) {
+            val name = e.component.id.replace("button_tage_", "collection_")
+            if (e.screen.id == name) return
+            val targetPage = idToPage[name] ?: return warning("未找到相对页面")
+            targetPage.showCachePage(e.player)
+        }
+        if (e.component.id.startsWith("slot")) slotClick(e, page)
     }
 
     private fun slotClick(e: PlayerPostClickComponentEvent, page: CollectionPage) {
         val slot = e.component as WSlot
-        if (slot.itemStack.isAir()) return
+        if (slot.itemStack.isAir()) {
+            info("设置${e.player.name} ${page.getPage()}-${slot.id}为空")
+            tempData[e.player.uniqueId.toString()]?.get(page.getPageID())?.remove(slot.id)
+            return
+        }
         if (!page.checkItemLegal(slot.itemStack)) return giveBackItem(slot, e.player, page.unLegalNotice)
         if (page.needsLore.isNotEmpty()) {
             val lore = slot.itemStack.itemMeta?.lore ?: return giveBackItem(slot, e.player, page.unLegalNotice)
@@ -91,10 +79,7 @@ object CollectionPageTool : PageTools {
                 lore.find { it.contains(need) } ?: return giveBackItem(slot, e.player, page.unLegalNotice)
             }
         }
-        if (!page.onlyAllowHaveSingleStack)
-            return
-
-        e.screen.container.componentMap.filter {
+        if (page.onlyAllowHaveSingleStack) e.screen.container.componentMap.filter {
             it.key.startsWith("slot") && it.key != e.component.id
         }.map {
             (it.value as WSlot).itemStack
@@ -103,13 +88,13 @@ object CollectionPageTool : PageTools {
         }.find {
             it.itemMeta?.displayName == slot.itemStack.itemMeta?.displayName
         }.run {
-            if (this != null) {
-                e.player.sendMessage("不能放两打！")
-                e.player.giveItem(slot.itemStack)
-                slot.itemStack = ItemStack(Material.AIR)
-                WuxieAPI.updateGui(e.player)
-            }
+            if (this != null)
+                return giveBackItem(slot, e.player, "不能放两打！")
         }
+        info("设置${e.player.name} ${page.getPage()}-${slot.id}为${slot.itemStack.itemMeta?.displayName}")
+        val itemStackString = slot.itemStack.serializeToByteArray(true).contentToString().replace(" ", "")
+        tempData.getOrPut(e.player.uniqueId.toString()) { mutableMapOf() }
+            .getOrPut(page.getPageID()) { mutableMapOf() }[slot.id] = itemStackString
     }
 
     private fun giveBackItem(slot: WSlot, player: Player, notice: String) {
@@ -120,27 +105,24 @@ object CollectionPageTool : PageTools {
     }
 
     override fun giveBackItems(pl: Player, gui: WxScreen) {
-        gui.container.componentMap.filter {
-            it.key.startsWith("slot")
-        }.mapValues {
-            (it.value as WSlot).itemStack
-        }.filterNot {
-            it.value.isAir()
-        }.mapValues {
-            it.value.serializeToByteArray(true).contentToString().replace(" ", "")
-        }.let {
-            pl.getDataContainer()[gui.id] = Gson().toJson(it)
+        tempData[pl.uniqueId.toString()]?.forEach {
+            pl.getDataContainer()[it.key] = Gson().toJson(it.value)
         }
+        tempData.remove(pl.uniqueId.toString())
     }
 
     override fun guiPrepare(player: Player, gui: WxScreen) {
         gui.cursor = null
         addTageAndButton(gui)
-        val slots = player.getDataContainer()[gui.id]?.run {
-            Gson().fromJson<Map<String, String>>(
-                this, object : TypeToken<Map<String, String>>() {}.type
-            )
-        }?.mapValues {
+        val slots = tempData.getOrPut(player.uniqueId.toString()) {
+            mutableMapOf()
+        }.getOrPut(gui.id) {
+            player.getDataContainer()[gui.id]?.run {
+                Gson().fromJson<Map<String, String>>(
+                    this, object : TypeToken<Map<String, String>>() {}.type
+                )
+            }?.toMutableMap() ?: mutableMapOf()
+        }.mapValues {
             val byteValues = it.value.substring(1, it.value.length - 1).split(",")
             val bytes = ByteArray(byteValues.size)
 
@@ -149,12 +131,13 @@ object CollectionPageTool : PageTools {
             }
             bytes
         }
+
         gui.container.componentMap.filter {
             it.key.startsWith("slot")
         }.map {
             (it.value as WSlot)
         }.forEach {
-            it.itemStack = slots?.get(it.id)?.run {
+            it.itemStack = slots[it.id]?.run {
                 this.deserializeToItemStack(true)
             } ?: ItemStack(Material.AIR)
         }
@@ -172,7 +155,7 @@ object CollectionPageTool : PageTools {
     private fun addTageAndButton(gui: WxScreen) {
         WButton(
             gui.container,
-            "button_tage_moon_cake",
+            "button_tage_mooncake",
             "§6§l月饼",
             "${BUTTON_TAGE_MOON_CAKE_IMAGE}_1.png",
             "${BUTTON_TAGE_MOON_CAKE_IMAGE}_2.png",

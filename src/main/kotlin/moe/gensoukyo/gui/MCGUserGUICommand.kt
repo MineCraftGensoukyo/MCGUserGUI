@@ -4,15 +4,14 @@ import moe.gensoukyo.gui.config.MainConfig
 import moe.gensoukyo.gui.config.MainConfig.reload
 import moe.gensoukyo.gui.pages.*
 import moe.gensoukyo.gui.pages.collection.CollectionMainPage
+import moe.gensoukyo.gui.pages.collection.CollectionPage
+import moe.gensoukyo.gui.pages.collection.CollectionPageTool
 import moe.gensoukyo.gui.util.ClearCache
 import org.bukkit.entity.Player
 import taboolib.common.platform.ProxyCommandSender
 import taboolib.common.platform.command.PermissionDefault
 import taboolib.common.platform.command.command
-import taboolib.common.platform.function.getProxyPlayer
-import taboolib.common.platform.function.onlinePlayers
-import taboolib.common.platform.function.pluginId
-import taboolib.common.platform.function.pluginVersion
+import taboolib.common.platform.function.*
 import taboolib.module.chat.TellrawJson
 
 class MCGUserGUICommand {
@@ -27,7 +26,8 @@ class MCGUserGUICommand {
         "embedding [player]" to " -- 打开镶嵌GUI\n",
         "unembedding [player]" to " -- 打开摘除镶嵌GUI\n"
     )
-    fun register(){
+
+    fun register() {
         command("mcggui", permissionDefault = PermissionDefault.OP, permissionMessage = "§c你没有使用这个指令的权限！") {
             //一级子指令参数
             literal("help", optional = true) {
@@ -152,11 +152,24 @@ class MCGUserGUICommand {
                 }
                 dynamic {
                     suggestion<ProxyCommandSender> { _, _ ->
-                        onlinePlayers().map { it.name }
+                        CollectionPageTool.idToPage.keys.map {
+                            it.replace("collection_", "")
+                        }.toList()
                     }
-                    execute<ProxyCommandSender> { _, _, argument ->
-                        val collectionMainPage = CollectionMainPage()
-                        collectionMainPage.showCachePage(getProxyPlayer(argument)!!.cast())
+                    execute<Player> { sender, context, _ ->
+                        val name = context.argument(0)
+                        val collectionPage = CollectionPageTool.idToPage["collection_$name"] ?: CollectionMainPage()
+                        collectionPage.showCachePage(sender)
+                    }
+                    dynamic {
+                        suggestion<ProxyCommandSender> { _, _ ->
+                            onlinePlayers().map { it.name }
+                        }
+                        execute<ProxyCommandSender> { _, context, argument ->
+                            val name = context.argument(-1)
+                            val collectionPage = CollectionPageTool.idToPage["collection_$name"] ?: CollectionMainPage()
+                            collectionPage.showCachePage(getProxyPlayer(argument)!!.cast())
+                        }
                     }
                 }
             }
