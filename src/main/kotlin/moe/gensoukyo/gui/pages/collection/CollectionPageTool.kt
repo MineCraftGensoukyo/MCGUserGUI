@@ -8,7 +8,6 @@ import me.wuxie.wakeshow.wakeshow.ui.WxScreen
 import me.wuxie.wakeshow.wakeshow.ui.component.WButton
 import me.wuxie.wakeshow.wakeshow.ui.component.WSlot
 import moe.gensoukyo.gui.pages.PageTools
-import moe.gensoukyo.lib.reflection.remove
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
@@ -72,11 +71,26 @@ object CollectionPageTool : PageTools {
             tempData[e.player.uniqueId.toString()]?.get(page.getPageID())?.remove(slot.id)
             return
         }
-        if (!page.checkItemLegal(slot.itemStack)) return giveBackItem(slot, e.player, page.unLegalNotice)
+        if (!page.checkItemLegal(slot.itemStack)) return giveBackItem(
+            slot,
+            e.player,
+            page.unLegalNotice,
+            page.getPageID()
+        )
         if (page.needsLore.isNotEmpty()) {
-            val lore = slot.itemStack.itemMeta?.lore ?: return giveBackItem(slot, e.player, page.unLegalNotice)
+            val lore = slot.itemStack.itemMeta?.lore ?: return giveBackItem(
+                slot,
+                e.player,
+                page.unLegalNotice,
+                page.getPageID()
+            )
             page.needsLore.forEach { need ->
-                lore.find { it.contains(need) } ?: return giveBackItem(slot, e.player, page.unLegalNotice)
+                lore.find { it.contains(need) } ?: return giveBackItem(
+                    slot,
+                    e.player,
+                    page.unLegalNotice,
+                    page.getPageID()
+                )
             }
         }
         if (page.onlyAllowHaveSingleStack) e.screen.container.componentMap.filter {
@@ -89,7 +103,7 @@ object CollectionPageTool : PageTools {
             it.itemMeta?.displayName == slot.itemStack.itemMeta?.displayName
         }.run {
             if (this != null)
-                return giveBackItem(slot, e.player, "不能放两打！")
+                return giveBackItem(slot, e.player, "不能放两打！", page.getPageID())
         }
         info("设置${e.player.name} ${page.getPage()}-${slot.id}为${slot.itemStack.itemMeta?.displayName}")
         val itemStackString = slot.itemStack.serializeToByteArray(true).contentToString().replace(" ", "")
@@ -97,7 +111,8 @@ object CollectionPageTool : PageTools {
             .getOrPut(page.getPageID()) { mutableMapOf() }[slot.id] = itemStackString
     }
 
-    private fun giveBackItem(slot: WSlot, player: Player, notice: String) {
+    private fun giveBackItem(slot: WSlot, player: Player, notice: String, pageID: String) {
+        tempData[player.uniqueId.toString()]?.get(pageID)?.remove(slot.id)
         player.sendMessage(notice)
         player.giveItem(slot.itemStack)
         slot.itemStack = ItemStack(Material.AIR)
@@ -105,6 +120,10 @@ object CollectionPageTool : PageTools {
     }
 
     override fun giveBackItems(pl: Player, gui: WxScreen) {
+        if (!gui.cursor.isAir) {
+            pl.giveItem(gui.cursor)
+            gui.cursor = null
+        }
         tempData[pl.uniqueId.toString()]?.forEach {
             pl.getDataContainer()[it.key] = Gson().toJson(it.value)
         }
