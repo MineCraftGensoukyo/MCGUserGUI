@@ -33,34 +33,37 @@ object CollectionPageTool : PageTools {
     @SubscribeEvent(EventPriority.HIGHEST)
     fun playerPostClickComponentEventListener(e: PlayerPostClickComponentEvent) {
         val page = idToPage[e.screen.id] ?: return
-        when (e.component.id) {
-            "button_last_page" -> {
-                val openedGui = idToPage[e.screen.id]
-                if (openedGui == null) {
-                    severe("非收藏品UI ${e.screen.id} 可以点到收藏品的UI界面")
-                    return
-                }
-                val lastPage = idToPage[openedGui.getLastPage()] ?: return warning("未找到相对页面")
-                lastPage.showCachePage(e.player)
-            }
-
-            "button_next_page" -> {
-                val openedGui = idToPage[e.screen.id]
-                if (openedGui == null) {
-                    severe("非收藏品UI ${e.screen.id} 可以点到收藏品的UI界面")
-                    return
-                }
-                val nextPage = idToPage[openedGui.getNextPage()] ?: return warning("未找到相对页面")
-                nextPage.showCachePage(e.player)
-            }
+        val openedGui = idToPage[e.screen.id]
+        if (openedGui == null) {
+            severe("非收藏品UI ${e.screen.id} 可以点到收藏品的UI界面")
+            return
         }
-
+        var targetPage = page
+        if (e.component.id.equals("button_last_page")) {
+            val lastPage = idToPage[openedGui.getLastPage()] ?: return warning("未找到相对页面")
+            targetPage = lastPage
+        }
+        if (e.component.id.equals("button_next_page")) {
+            val nextPage = idToPage[openedGui.getNextPage()] ?: return warning("未找到相对页面")
+            targetPage = nextPage
+        }
         if (e.component.id.startsWith("button_tage_")) {
             val name = e.component.id.replace("button_tage_", "collection_")
             if (e.screen.id == name) return
-            val targetPage = idToPage[name] ?: return warning("未找到相对页面")
+            targetPage = idToPage[name] ?: return warning("未找到相对页面")
+        }
+        if (targetPage.getPageID() != e.screen.id) {
+            if (!e.screen.cursor.isAir()){
+                e.player.giveItem(e.screen.cursor)
+                e.screen.cursor = null
+            }
+            tempData[e.player.uniqueId.toString()]?.forEach {
+                e.player.getDataContainer()[it.key] = Gson().toJson(it.value)
+            }
+            tempData.remove(e.player.uniqueId.toString())
             targetPage.showCachePage(e.player)
         }
+
         if (e.component.id.startsWith("slot")) slotClick(e, page)
     }
 
@@ -120,10 +123,7 @@ object CollectionPageTool : PageTools {
     }
 
     override fun giveBackItems(pl: Player, gui: WxScreen) {
-        if (!gui.cursor.isAir) {
-            pl.giveItem(gui.cursor)
-            gui.cursor = null
-        }
+        gui.cursor = null
         tempData[pl.uniqueId.toString()]?.forEach {
             pl.getDataContainer()[it.key] = Gson().toJson(it.value)
         }
@@ -131,7 +131,6 @@ object CollectionPageTool : PageTools {
     }
 
     override fun guiPrepare(player: Player, gui: WxScreen) {
-        gui.cursor = null
         addTageAndButton(gui)
         val slots = tempData.getOrPut(player.uniqueId.toString()) {
             mutableMapOf()

@@ -26,22 +26,23 @@ class MoonCakeCollection : CollectionPage {
     private val y0 = 240
 
 
-    private val gui = WInventoryScreen(
-        getPageID(),
-        backgroundImage,
-        guiTestPos.dx,
-        guiTestPos.dy,
-        guiTestPos.w,
-        guiTestPos.h,
-        x0,
-        y0 + 18 * 6 + 18
-    )
+
 
     override fun getPageID() = "collection_mooncake"
     override fun getNextPage() = "collection_akyuu"
     override fun getLastPage() = "collection_mobs"
 
     override fun getPage(): WxScreen {
+        val gui = WInventoryScreen(
+            getPageID(),
+            backgroundImage,
+            guiTestPos.dx,
+            guiTestPos.dy,
+            guiTestPos.w,
+            guiTestPos.h,
+            x0,
+            y0 + 18 * 6 + 18
+        )
         for (l in 0..5)
             for (i in 0..8) {
                 val slotName = "slot$l-$i"

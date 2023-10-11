@@ -16,16 +16,6 @@ class CollectionMainPage : CollectionPage {
     private val imageRoot = "location:mcgproject:textures/gui"
     private val backgroundImage = "$imageRoot/collection_mobs.png"
 
-    private val gui = WInventoryScreen(
-        getPageID(),
-        backgroundImage,
-        guiTestPos.dx,
-        guiTestPos.dy,
-        guiTestPos.w,
-        guiTestPos.h,
-        x0,
-        y0 + 18 * 6 + 12
-    )
     override val needsLore = arrayOf<String>()
     override val onlyAllowHaveSingleStack = false
     override val unLegalNotice = "这不是时装！"
@@ -38,6 +28,16 @@ class CollectionMainPage : CollectionPage {
     override fun getLastPage() = "collection_akyuu"
 
     override fun getPage(): WxScreen {
+        val gui = WInventoryScreen(
+            getPageID(),
+            backgroundImage,
+            guiTestPos.dx,
+            guiTestPos.dy,
+            guiTestPos.w,
+            guiTestPos.h,
+            x0,
+            y0 + 18 * 6 + 12
+        )
         for (l in 0..5)
             for (i in 0..8) {
                 val slotName = "slot$l-$i"

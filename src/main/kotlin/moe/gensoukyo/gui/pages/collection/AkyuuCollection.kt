@@ -19,16 +19,6 @@ class AkyuuCollection : CollectionPage {
     private val y0 = 240
 
 
-    private val gui = WInventoryScreen(
-        getPageID(),
-        backgroundImage,
-        guiTestPos.dx,
-        guiTestPos.dy,
-        guiTestPos.w,
-        guiTestPos.h,
-        x0,
-        y0 + 18 * 6 + 18
-    )
     override val needsLore = arrayOf("收藏品")
     override val onlyAllowHaveSingleStack = true
     override val unLegalNotice = "这不是收藏品！"
@@ -39,6 +29,16 @@ class AkyuuCollection : CollectionPage {
     override fun getNextPage() = "collection_mobs"
     override fun getLastPage() = "collection_mooncake"
     override fun getPage(): WxScreen {
+        val gui = WInventoryScreen(
+            getPageID(),
+            backgroundImage,
+            guiTestPos.dx,
+            guiTestPos.dy,
+            guiTestPos.w,
+            guiTestPos.h,
+            x0,
+            y0 + 18 * 6 + 18
+        )
         for (l in 0..5)
             for (i in 0..8) {
                 val slotName = "slot$l-$i"
