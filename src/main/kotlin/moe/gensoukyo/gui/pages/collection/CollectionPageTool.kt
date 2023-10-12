@@ -69,6 +69,13 @@ object CollectionPageTool : PageTools {
 
     private fun slotClick(e: PlayerPostClickComponentEvent, page: CollectionPage) {
         val slot = e.component as WSlot
+        if(e.mouseButton==1){
+            if(!slot.itemStack.isAir()&&!e.screen.cursor.isAir()){
+                e.player.giveItem(slot.itemStack)
+                slot.itemStack = ItemStack(Material.AIR)
+                WuxieAPI.updateGui(e.player)
+            }
+        }
         if (slot.itemStack.isAir()) {
             info("设置${e.player.name} ${page.getPage()}-${slot.id}为空")
             tempData[e.player.uniqueId.toString()]?.get(page.getPageID())?.remove(slot.id)
@@ -155,9 +162,11 @@ object CollectionPageTool : PageTools {
         }.map {
             (it.value as WSlot)
         }.forEach {
-            it.itemStack = slots[it.id]?.run {
-                this.deserializeToItemStack(true)
-            } ?: ItemStack(Material.AIR)
+            if(it.itemStack.isAir()){
+                it.itemStack = slots[it.id]?.run {
+                    this.deserializeToItemStack(true)
+                } ?: ItemStack(Material.AIR)
+            }
         }
     }
 
