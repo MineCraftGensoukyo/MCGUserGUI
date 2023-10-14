@@ -23,7 +23,7 @@ import taboolib.platform.util.isAir
 import taboolib.platform.util.serializeToByteArray
 
 object CollectionPageTool : PageTools {
-    private val tempData = mutableMapOf<String, MutableMap<String, MutableMap<String, String>>>()
+    val tempData = mutableMapOf<String, MutableMap<String, MutableMap<String, String>>>()
     val idToPage = linkedMapOf(
         "collection_mobs" to CollectionMainPage(),
         "collection_mooncake" to MoonCakeCollection(),
