@@ -4,6 +4,7 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import me.wuxie.wakeshow.wakeshow.api.WuxieAPI
 import me.wuxie.wakeshow.wakeshow.api.event.PlayerPostClickComponentEvent
+import me.wuxie.wakeshow.wakeshow.api.event.PlayerPreClickComponentEvent
 import me.wuxie.wakeshow.wakeshow.ui.WxScreen
 import me.wuxie.wakeshow.wakeshow.ui.component.WButton
 import me.wuxie.wakeshow.wakeshow.ui.component.WSlot
@@ -13,7 +14,6 @@ import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import taboolib.common.platform.event.EventPriority
 import taboolib.common.platform.event.SubscribeEvent
-import taboolib.common.platform.function.info
 import taboolib.common.platform.function.severe
 import taboolib.common.platform.function.warning
 import taboolib.expansion.getDataContainer
@@ -32,28 +32,43 @@ object CollectionPageTool : PageTools {
 
     @SubscribeEvent(EventPriority.HIGHEST)
     fun playerPostClickComponentEventListener(e: PlayerPostClickComponentEvent) {
-        val page = idToPage[e.screen.id] ?: return
-        val openedGui = idToPage[e.screen.id]
-        if (openedGui == null) {
-            severe("非收藏品UI ${e.screen.id} 可以点到收藏品的UI界面")
-            return
-        }
-        var targetPage = page
-        if (e.component.id.equals("button_last_page")) {
-            val lastPage = idToPage[openedGui.getLastPage()] ?: return warning("未找到相对页面")
-            targetPage = lastPage
-        }
-        if (e.component.id.equals("button_next_page")) {
-            val nextPage = idToPage[openedGui.getNextPage()] ?: return warning("未找到相对页面")
-            targetPage = nextPage
-        }
-        if (e.component.id.startsWith("button_tage_")) {
-            val name = e.component.id.replace("button_tage_", "collection_")
-            if (e.screen.id == name) return
-            targetPage = idToPage[name] ?: return warning("未找到相对页面")
-        }
+        val openedGui = idToPage[e.screen.id] ?: return severe("非收藏品UI ${e.screen.id} 可以点到收藏品的UI界面")
+
+        val targetPage = when {
+            e.component.id == "button_last_page" -> idToPage[openedGui.getLastPage()]
+            e.component.id == "button_next_page" -> idToPage[openedGui.getNextPage()]
+            e.component.id.startsWith("button_tage_") -> {
+                val name = e.component.id.replace("button_tage_", "collection_")
+                if (e.screen.id == name) return
+                idToPage[name]
+            }
+
+            e.component.id.startsWith("slot") -> {
+                val slot = e.component as WSlot
+                if (e.mouseButton == 1 && !slot.itemStack.isAir() && !e.screen.cursor.isAir()) {
+                    e.player.giveItem(slot.itemStack)
+                    slot.itemStack = ItemStack(Material.AIR)
+                    WuxieAPI.updateGui(e.player)
+                    tempData[e.player.uniqueId.toString()]?.get(openedGui.getPageID())?.remove(slot.id)
+                    return
+                }
+
+                if (slot.itemStack.isAir()) {
+                    tempData[e.player.uniqueId.toString()]?.get(openedGui.getPageID())?.remove(slot.id)
+                    return
+                }
+
+                val itemStackString = slot.itemStack.serializeToByteArray(true).contentToString().replace(" ", "")
+                tempData.getOrPut(e.player.uniqueId.toString()) { mutableMapOf() }
+                    .getOrPut(openedGui.getPageID()) { mutableMapOf() }[slot.id] = itemStackString
+                return
+            }
+
+            else -> return
+        } ?: return warning("未找到相对页面")
+
         if (targetPage.getPageID() != e.screen.id) {
-            if (!e.screen.cursor.isAir()){
+            if (!e.screen.cursor.isAir()) {
                 e.player.giveItem(e.screen.cursor)
                 e.screen.cursor = null
             }
@@ -63,44 +78,21 @@ object CollectionPageTool : PageTools {
             tempData.remove(e.player.uniqueId.toString())
             targetPage.showCachePage(e.player)
         }
-
-        if (e.component.id.startsWith("slot")) slotClick(e, page)
     }
 
-    private fun slotClick(e: PlayerPostClickComponentEvent, page: CollectionPage) {
-        val slot = e.component as WSlot
-        if(e.mouseButton==1){
-            if(!slot.itemStack.isAir()&&!e.screen.cursor.isAir()){
-                e.player.giveItem(slot.itemStack)
-                slot.itemStack = ItemStack(Material.AIR)
-                WuxieAPI.updateGui(e.player)
-            }
-        }
-        if (slot.itemStack.isAir()) {
-            info("设置${e.player.name} ${page.getPage()}-${slot.id}为空")
-            tempData[e.player.uniqueId.toString()]?.get(page.getPageID())?.remove(slot.id)
+    @SubscribeEvent(EventPriority.HIGHEST)
+    fun playerPreClickComponentEventListener(e: PlayerPreClickComponentEvent) {
+        if (!e.component.id.startsWith("slot")) return
+        val page = idToPage[e.screen.id] ?: return severe("非收藏品UI ${e.screen.id} 可以点到收藏品的UI界面")
+
+        val itemStack = e.screen.cursor
+        if (itemStack == null || itemStack.isAir)
             return
-        }
-        if (!page.checkItemLegal(slot.itemStack)) return giveBackItem(
-            slot,
-            e.player,
-            page.unLegalNotice,
-            page.getPageID()
-        )
+        if (!page.checkItemLegal(itemStack)) return cancelledClickSlot(e, e.player, page.unLegalNotice)
         if (page.needsLore.isNotEmpty()) {
-            val lore = slot.itemStack.itemMeta?.lore ?: return giveBackItem(
-                slot,
-                e.player,
-                page.unLegalNotice,
-                page.getPageID()
-            )
+            val lore = itemStack.itemMeta?.lore ?: return cancelledClickSlot(e, e.player, page.unLegalNotice)
             page.needsLore.forEach { need ->
-                lore.find { it.contains(need) } ?: return giveBackItem(
-                    slot,
-                    e.player,
-                    page.unLegalNotice,
-                    page.getPageID()
-                )
+                lore.find { it.contains(need) } ?: return cancelledClickSlot(e, e.player, page.unLegalNotice)
             }
         }
         if (page.onlyAllowHaveSingleStack) e.screen.container.componentMap.filter {
@@ -110,23 +102,15 @@ object CollectionPageTool : PageTools {
         }.filterNot {
             it.isAir()
         }.find {
-            it.itemMeta?.displayName == slot.itemStack.itemMeta?.displayName
+            it.itemMeta?.displayName == itemStack.itemMeta?.displayName
         }.run {
-            if (this != null)
-                return giveBackItem(slot, e.player, "不能放两打！", page.getPageID())
+            if (this != null) return cancelledClickSlot(e, e.player, "不能放两打！")
         }
-        info("设置${e.player.name} ${page.getPage()}-${slot.id}为${slot.itemStack.itemMeta?.displayName}")
-        val itemStackString = slot.itemStack.serializeToByteArray(true).contentToString().replace(" ", "")
-        tempData.getOrPut(e.player.uniqueId.toString()) { mutableMapOf() }
-            .getOrPut(page.getPageID()) { mutableMapOf() }[slot.id] = itemStackString
     }
 
-    private fun giveBackItem(slot: WSlot, player: Player, notice: String, pageID: String) {
-        tempData[player.uniqueId.toString()]?.get(pageID)?.remove(slot.id)
+    private fun cancelledClickSlot(e: PlayerPreClickComponentEvent, player: Player, notice: String) {
+        e.isCancelled = true
         player.sendMessage(notice)
-        player.giveItem(slot.itemStack)
-        slot.itemStack = ItemStack(Material.AIR)
-        WuxieAPI.updateGui(player)
     }
 
     override fun giveBackItems(pl: Player, gui: WxScreen) {
@@ -161,12 +145,12 @@ object CollectionPageTool : PageTools {
             it.key.startsWith("slot")
         }.map {
             (it.value as WSlot)
+        }.filter {
+            it.itemStack.isAir()
         }.forEach {
-            if(it.itemStack.isAir()){
-                it.itemStack = slots[it.id]?.run {
-                    this.deserializeToItemStack(true)
-                } ?: ItemStack(Material.AIR)
-            }
+            it.itemStack = slots[it.id]?.run {
+                this.deserializeToItemStack(true)
+            } ?: ItemStack(Material.AIR)
         }
     }
 
