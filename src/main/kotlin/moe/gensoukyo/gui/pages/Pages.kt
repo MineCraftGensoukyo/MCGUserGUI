@@ -12,6 +12,8 @@ object Pages {
         "摘除镶嵌UI" to UnEmbeddingPageTools,
         "collection_mobs" to CollectionPageTool,
         "collection_akyuu" to CollectionPageTool,
-        "collection_mooncake" to CollectionPageTool
+        "collection_mooncake" to CollectionPageTool,
+        "collection_artstaff1" to CollectionPageTool,
+        "collection_moesumikahalloween" to CollectionPageTool
     )
 }

@@ -10,12 +10,15 @@ import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
 
 
-class MobsCollection : CollectionPage {
+class Artstaff1Collection : CollectionPage {
+    private val imageRoot = "location:mcgproject:textures/gui"
+    private val backgroundImage = "$imageRoot/collection_artstaff1.png"
+
+
     private val guiTestPos = Pos(-1, -91, 512, 512, 0, 0)
     private val x0 = 175
-    private val y0 = 246
-    private val imageRoot = "location:mcgproject:textures/gui"
-    private val backgroundImage = "$imageRoot/collection_mobs.png"
+    private val y0 = 240
+
 
     override val needsLore = arrayOf<String>()
     override val onlyAllowHaveSingleStack = false
@@ -27,24 +30,23 @@ class MobsCollection : CollectionPage {
     override fun getLabel(container: Container) {
         WButton(
             container,
-            "button_tage_mobs",
-            "§c§l时装",
-            "$imageRoot/collection_tag_mobs_1.png",
-            "$imageRoot/collection_tag_mobs_2.png",
-            "$imageRoot/collection_tag_mobs_2.png",
+            "button_tage_artstaff1",
+            "§2§l时装",
+            "$imageRoot/collection_tag_artstaff1_1.png",
+            "$imageRoot/collection_tag_artstaff1_2.png",
+            "$imageRoot/collection_tag_artstaff1_2.png",
             0,
             0
         ).apply {
             w = 64
             h = 27
             x = x0 + 18 * 9 + 32
-            y = y0 - h + 2 + 21
+            y = y0 + 2 + 21 + 6
             container.add(this)
         }
     }
 
-    override fun getPageID() = "collection_mobs"
-
+    override fun getPageID() = "collection_artstaff1"
     override fun getPage(): WxScreen {
         val gui = WInventoryScreen(
             getPageID(),
@@ -54,13 +56,13 @@ class MobsCollection : CollectionPage {
             guiTestPos.w,
             guiTestPos.h,
             x0,
-            y0 + 18 * 6 + 12
+            y0 + 18 * 6 + 18
         )
         for (l in 0..5)
             for (i in 0..8) {
                 val slotName = "slot$l-$i"
                 val x = x0 + 18 * i
-                val y = y0 - 6 + 18 * l
+                val y = y0 + 18 * l
                 createEmptySlot(gui.container, slotName, x, y)
             }
 

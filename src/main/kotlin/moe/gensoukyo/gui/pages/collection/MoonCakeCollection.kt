@@ -47,9 +47,6 @@ class MoonCakeCollection : CollectionPage {
 
     }
     override fun getPageID() = "collection_mooncake"
-    override fun getNextPage() = "collection_akyuu"
-    override fun getLastPage() = "collection_mobs"
-
     override fun getPage(): WxScreen {
         val gui = WInventoryScreen(
             getPageID(),

@@ -6,8 +6,6 @@ import org.bukkit.inventory.ItemStack
 
 interface CollectionPage : Page {
     fun getPageID(): String
-    fun getLastPage(): String
-    fun getNextPage(): String
     fun checkItemLegal(item: ItemStack): Boolean
     fun getLabel(container: Container)
 

@@ -28,7 +28,9 @@ object CollectionPageTool : PageTools {
     val idToPage = linkedMapOf(
         "collection_mobs" to MobsCollection(),
         "collection_mooncake" to MoonCakeCollection(),
-        "collection_akyuu" to AkyuuCollection()
+        "collection_akyuu" to AkyuuCollection(),
+        "collection_artstaff1" to Artstaff1Collection(),
+        "collection_moesumikahalloween" to MoesumikahalloweenCollection()
     )
 
     private fun CollectionPage.nextPage(uuid: UUID): String? {
