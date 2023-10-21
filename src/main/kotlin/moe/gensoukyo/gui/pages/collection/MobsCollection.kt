@@ -3,13 +3,14 @@ package moe.gensoukyo.gui.pages.collection
 import me.wuxie.wakeshow.wakeshow.ui.Container
 import me.wuxie.wakeshow.wakeshow.ui.WInventoryScreen
 import me.wuxie.wakeshow.wakeshow.ui.WxScreen
+import me.wuxie.wakeshow.wakeshow.ui.component.WButton
 import me.wuxie.wakeshow.wakeshow.ui.component.WSlot
 import moe.gensoukyo.gui.util.Pos
 import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
 
 
-class CollectionMainPage : CollectionPage {
+class MobsCollection : CollectionPage {
     private val guiTestPos = Pos(-1, -91, 512, 512, 0, 0)
     private val x0 = 175
     private val y0 = 246
@@ -21,6 +22,25 @@ class CollectionMainPage : CollectionPage {
     override val unLegalNotice = "这不是时装！"
     override fun checkItemLegal(item: ItemStack): Boolean {
         return item.type.name == "ARMOURERS_WORKSHOP_ITEMSKIN"
+    }
+
+    override fun getLabel(container: Container) {
+        WButton(
+            container,
+            "button_tage_mobs",
+            "§c§l时装",
+            "$imageRoot/collection_tag_mobs_1.png",
+            "$imageRoot/collection_tag_mobs_2.png",
+            "$imageRoot/collection_tag_mobs_2.png",
+            0,
+            0
+        ).apply {
+            w = 64
+            h = 27
+            x = x0 + 18 * 9 + 32
+            y = y0 - h + 2 + 27 -6
+            container.add(this)
+        }
     }
 
     override fun getPageID() = "collection_mobs"

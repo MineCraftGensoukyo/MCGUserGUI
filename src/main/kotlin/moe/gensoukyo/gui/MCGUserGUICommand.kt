@@ -3,8 +3,7 @@ package moe.gensoukyo.gui
 import moe.gensoukyo.gui.config.MainConfig
 import moe.gensoukyo.gui.config.MainConfig.reload
 import moe.gensoukyo.gui.pages.*
-import moe.gensoukyo.gui.pages.collection.CollectionMainPage
-import moe.gensoukyo.gui.pages.collection.CollectionPage
+import moe.gensoukyo.gui.pages.collection.MobsCollection
 import moe.gensoukyo.gui.pages.collection.CollectionPageTool
 import moe.gensoukyo.gui.util.ClearCache
 import org.bukkit.entity.Player
@@ -146,10 +145,6 @@ class MCGUserGUICommand {
                 }
             }
             literal("collection", optional = true) {
-                execute<Player> { sender, _, _ ->
-                    val collectionMainPage = CollectionMainPage()
-                    collectionMainPage.showCachePage(sender)
-                }
                 dynamic {
                     suggestion<ProxyCommandSender> { _, _ ->
                         CollectionPageTool.idToPage.keys.map {
@@ -158,7 +153,9 @@ class MCGUserGUICommand {
                     }
                     execute<Player> { sender, context, _ ->
                         val name = context.argument(0)
-                        val collectionPage = CollectionPageTool.idToPage["collection_$name"] ?: CollectionMainPage()
+                        if (!sender.hasPermission("mcggui.page.collection_$name"))
+                            return@execute
+                        val collectionPage = CollectionPageTool.idToPage["collection_$name"] ?: MobsCollection()
                         collectionPage.showCachePage(sender)
                     }
                     dynamic {
@@ -167,7 +164,9 @@ class MCGUserGUICommand {
                         }
                         execute<ProxyCommandSender> { _, context, argument ->
                             val name = context.argument(-1)
-                            val collectionPage = CollectionPageTool.idToPage["collection_$name"] ?: CollectionMainPage()
+                            if (getProxyPlayer(argument)?.hasPermission("mcggui.page.collection_$name") != true)
+                                return@execute
+                            val collectionPage = CollectionPageTool.idToPage["collection_$name"] ?: MobsCollection()
                             collectionPage.showCachePage(getProxyPlayer(argument)!!.cast())
                         }
                     }

@@ -3,6 +3,7 @@ package moe.gensoukyo.gui.pages.collection
 import me.wuxie.wakeshow.wakeshow.ui.Container
 import me.wuxie.wakeshow.wakeshow.ui.WInventoryScreen
 import me.wuxie.wakeshow.wakeshow.ui.WxScreen
+import me.wuxie.wakeshow.wakeshow.ui.component.WButton
 import me.wuxie.wakeshow.wakeshow.ui.component.WSlot
 import moe.gensoukyo.gui.util.Pos
 import org.bukkit.Material
@@ -25,6 +26,26 @@ class AkyuuCollection : CollectionPage {
     override fun checkItemLegal(item: ItemStack): Boolean {
         return true
     }
+
+    override fun getLabel(container: Container) {
+        WButton(
+            container,
+            "button_tage_akyuu",
+            "§5§l藏品",
+            "$imageRoot/collection_tag_akyuu_1.png",
+            "$imageRoot/collection_tag_akyuu_2.png",
+            "$imageRoot/collection_tag_akyuu_2.png",
+            0,
+            0
+        ).apply {
+            w = 64
+            h = 27
+            x = x0 - w - 34
+            y = y0 - h + 2 + 27
+            container.add(this)
+        }
+    }
+
     override fun getPageID() = "collection_akyuu"
     override fun getNextPage() = "collection_mobs"
     override fun getLastPage() = "collection_mooncake"

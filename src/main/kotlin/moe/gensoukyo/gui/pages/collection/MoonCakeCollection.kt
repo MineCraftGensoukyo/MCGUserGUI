@@ -3,6 +3,7 @@ package moe.gensoukyo.gui.pages.collection
 import me.wuxie.wakeshow.wakeshow.ui.Container
 import me.wuxie.wakeshow.wakeshow.ui.WInventoryScreen
 import me.wuxie.wakeshow.wakeshow.ui.WxScreen
+import me.wuxie.wakeshow.wakeshow.ui.component.WButton
 import me.wuxie.wakeshow.wakeshow.ui.component.WSlot
 import moe.gensoukyo.gui.util.Pos
 import org.bukkit.Material
@@ -26,8 +27,25 @@ class MoonCakeCollection : CollectionPage {
     private val y0 = 240
 
 
+    override fun getLabel(container: Container) {
+        WButton(
+            container,
+            "button_tage_mooncake",
+            "§6§l月饼",
+            "$imageRoot/collection_tag_mooncake_1.png",
+            "$imageRoot/collection_tag_mooncake_2.png",
+            "$imageRoot/collection_tag_mooncake_2.png",
+            0,
+            0
+        ).apply {
+            w = 64
+            h = 27
+            x = x0 - w - 34
+            y = y0 - h + 2
+            container.add(this)
+        }
 
-
+    }
     override fun getPageID() = "collection_mooncake"
     override fun getNextPage() = "collection_akyuu"
     override fun getLastPage() = "collection_mobs"
