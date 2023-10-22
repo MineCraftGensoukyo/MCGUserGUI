@@ -5,8 +5,11 @@ import com.google.gson.reflect.TypeToken
 import me.wuxie.wakeshow.wakeshow.api.WuxieAPI
 import me.wuxie.wakeshow.wakeshow.api.event.PlayerPostClickComponentEvent
 import me.wuxie.wakeshow.wakeshow.api.event.PlayerPreClickComponentEvent
+import me.wuxie.wakeshow.wakeshow.ui.Component
+import me.wuxie.wakeshow.wakeshow.ui.Container
 import me.wuxie.wakeshow.wakeshow.ui.WxScreen
 import me.wuxie.wakeshow.wakeshow.ui.component.WButton
+import me.wuxie.wakeshow.wakeshow.ui.component.WImage
 import me.wuxie.wakeshow.wakeshow.ui.component.WSlot
 import moe.gensoukyo.gui.pages.PageTools
 import org.bukkit.Material
@@ -15,7 +18,7 @@ import org.bukkit.inventory.ItemStack
 import taboolib.common.platform.event.EventPriority
 import taboolib.common.platform.event.SubscribeEvent
 import taboolib.common.platform.function.severe
-    import taboolib.expansion.getDataContainer
+import taboolib.expansion.getDataContainer
 import taboolib.platform.util.deserializeToItemStack
 import taboolib.platform.util.giveItem
 import taboolib.platform.util.isAir
@@ -50,8 +53,7 @@ object CollectionPageTool : PageTools {
         var lastPage: String? = null
         while (iterator.hasNext()) {
             val next = iterator.next()
-            if (next == this.getPageID())
-                return lastPage ?: pages.last
+            if (next == this.getPageID()) return lastPage ?: pages.last
 
             lastPage = next
         }
@@ -103,7 +105,9 @@ object CollectionPageTool : PageTools {
                 e.player.getDataContainer()[it.key] = Gson().toJson(it.value)
             }
             tempData.remove(e.player.uniqueId.toString())
-            targetPage.showCachePage(e.player)
+            val container = targetPage.showCachePage(e.player)?.container ?: return
+            if (e.player.hasPermission("mcggui.feat.halloweenghost"))
+                addHalloweenGhost(e.component, container, e.player)
         }
     }
 
@@ -113,8 +117,7 @@ object CollectionPageTool : PageTools {
         val page = idToPage[e.screen.id] ?: return severe("非收藏品UI ${e.screen.id} 可以点到收藏品的UI界面")
 
         val itemStack = e.screen.cursor
-        if (itemStack == null || itemStack.isAir)
-            return
+        if (itemStack == null || itemStack.isAir) return
         if (!page.checkItemLegal(itemStack)) return cancelledClickSlot(e, e.player, page.unLegalNotice)
         if (page.needsLore.isNotEmpty()) {
             val lore = itemStack.itemMeta?.lore ?: return cancelledClickSlot(e, e.player, page.unLegalNotice)
@@ -150,15 +153,30 @@ object CollectionPageTool : PageTools {
     }
 
     override fun guiPrepare(player: Player, gui: WxScreen) {
-        if (playerPageList[player.uniqueId] == null)
-            idToPage.keys.filter {
-                player.hasPermission("mcggui.page.$it")
-            }.let {
-                playerPageList[player.uniqueId] = LinkedList<String>().apply {
-                    addAll(it)
-                }
+        if (playerPageList[player.uniqueId] == null) idToPage.keys.filter {
+            player.hasPermission("mcggui.page.$it")
+        }.let {
+            playerPageList[player.uniqueId] = LinkedList<String>().apply {
+                addAll(it)
             }
+        }
         addTageAndButton(gui, playerPageList[player.uniqueId]!!)
+        if (gui.id == "collection_moesumikahalloween") WImage(
+            gui.container,
+            "img_moesumikapumpkin",
+            "$IMAGE_ROOT/moesumikapumpkin.png",
+            141 - 15,
+            240 - 54 - 27 + 10,
+            15,
+            54
+        ).apply {
+            gui.container.add(this)
+        }
+        gui.id.replace("collection_", "button_tage_").let {
+            gui.container.getComponent(it) as WButton
+        }.let {
+            it.url1 = it.url2
+        }
         val slots = tempData.getOrPut(player.uniqueId.toString()) {
             mutableMapOf()
         }.getOrPut(gui.id) {
@@ -195,6 +213,39 @@ object CollectionPageTool : PageTools {
     private const val IMAGE_ROOT = "location:mcgproject:textures/gui"
     private const val BUTTON_LAST_PAGE_IMAGE = "$IMAGE_ROOT/collection_lastpage"
     private const val BUTTON_NEXT_PAGE_IMAGE = "$IMAGE_ROOT/collection_nextpage"
+
+    private fun addHalloweenGhost(tag: Component, container: Container, player: Player) {
+        if ((1..100).random() > 25) {
+            container.remove("img_halloweenghost")
+            WuxieAPI.updateGui(player)
+            return
+        }
+        when (tag.id) {
+            "button_tage_akyuu", "button_tage_mooncake" -> WImage(
+                container,
+                "img_halloweenghost",
+                "$IMAGE_ROOT/halloweenghost2.png",
+                0, 0, 64, 64
+            ).apply {
+                x = tag.x - tag.w + 1
+                y = tag.y + tag.h - h - 2
+                container.add(this)
+            }
+
+            "button_tage_artstaff1", "button_tage_mobs", "button_tage_moesumikahalloween" -> WImage(
+                container,
+                "img_halloweenghost",
+                "$IMAGE_ROOT/halloweenghost1.png",
+                0, 0, 64, 64
+            ).apply {
+                x = tag.x + tag.w - 1
+                y = tag.y + tag.h - h - 2
+                container.add(this)
+            }
+        }
+        WuxieAPI.updateGui(player)
+    }
+
 
     private fun addTageAndButton(gui: WxScreen, pages: LinkedList<String>) {
         pages.forEach { id ->

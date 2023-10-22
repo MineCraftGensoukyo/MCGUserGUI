@@ -21,13 +21,13 @@ interface Page {
         WuxieAPI.openGui(player.player, this.getPage())
     }
 
-    fun showCachePage(player: Player) {
+    fun showCachePage(player: Player): WxScreen? {
         if (!CheckModExistence.run(player)) {
             player.sendTitle(
                 "§c未安装WakeShow模组",
                 "§f请使用启动游戏.exe更新", 10, 70, 20
             )
-            return
+            return null
         }
         val iPlayer = player.npcApi
         try {
@@ -42,9 +42,11 @@ interface Page {
                 thisGui = guiData[iPlayer.tempdata]
             }
             WuxieAPI.openGui(player.player, thisGui)
+            return thisGui
         } catch (e: Exception) {
             warning(e)
         }
+        return null
     }
 
 }
